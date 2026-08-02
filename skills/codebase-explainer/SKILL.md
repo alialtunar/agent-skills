@@ -1,6 +1,6 @@
 ---
 name: codebase-explainer
-description: Explain a codebase or flow as an interactive active-learning HTML page: step-through flows, predict-then-reveal quizzes, collapsible depth. For onboarding, "explain this code", "how does X work".
+description: "Explain a codebase or flow as an interactive active-learning HTML page: step-through flows, predict-then-reveal quizzes, collapsible depth. For onboarding, 'explain this code', 'how does X work'."
 ---
 
 # Codebase Explainer
