@@ -24,7 +24,6 @@ Point Claude at a project and say things like:
 
 - "Explain this codebase" / "Onboard me to this project"
 - "What happens when I click X?" / "How does auth work here?"
-- Turkish: "bu projeyi anlat", "bu akış nasıl çalışıyor"
 
 ## Structure
 

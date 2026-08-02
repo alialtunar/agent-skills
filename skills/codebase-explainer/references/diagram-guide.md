@@ -1,73 +1,73 @@
-# Diyagram Seçim Rehberi
+# Diagram Selection Guide
 
-Doğru diyagram tipini seçmek, yanlış tipi güzelleştirmekten daha önemli. Aşağıdaki tablo hangi durumda hangisini kullanacağını gösterir.
+Choosing the right diagram type matters more than polishing the wrong one.
 
-| Ne anlatıyorsun | Mermaid tipi | Kullan çünkü |
+| What you're showing | Mermaid type | Why |
 |---|---|---|
-| Genel mimari, modüller arası ilişki | `flowchart` (TD veya LR) | Kutular + oklar, en okunaklı genel bakış |
-| Bir isteğin zaman içindeki yolculuğu (A çağırır B'yi, B çağırır C'yi) | `sequenceDiagram` | Kim kimi, hangi sırada çağırıyor — en net gösterim |
-| Veritabanı şeması, tablolar arası ilişki | `erDiagram` | İlişkisel yapı için standart |
-| Sınıflar/interface'ler arası OOP ilişkisi | `classDiagram` | Kalıtım, kompozisyon net görünür |
-| Bir varlığın durumdan duruma geçişi (sipariş: beklemede→onaylandı→kargoda) | `stateDiagram-v2` | Durum makineleri için doğru araç |
-| Zaman çizelgesi / release akışı | `gitGraph` veya basit `flowchart LR` | Kronoloji |
+| Overall architecture, relationships between modules | `flowchart` (TD or LR) | Boxes + arrows, most readable overview |
+| A request's journey over time (A calls B, B calls C) | `sequenceDiagram` | Who calls whom, in what order — clearest form |
+| Database schema, table relationships | `erDiagram` | The standard for relational structure |
+| OOP relationships between classes/interfaces | `classDiagram` | Inheritance and composition are visible |
+| An entity moving through states (order: pending→confirmed→shipped) | `stateDiagram-v2` | The right tool for state machines |
+| Timeline / release flow | `gitGraph` or a simple `flowchart LR` | Chronology |
 
-**Kural: Bir diyagramda en fazla 8-10 düğüm olsun.** Daha fazlası gerekiyorsa, diyagramı böl (örn. "üst seviye mimari" + ayrı "auth alt akışı").
+**Rule: at most 8–10 nodes per diagram.** If you need more, split it (e.g. "top-level architecture" + a separate "auth sub-flow").
 
-## Örnekler
+## Examples
 
-### Mimari (flowchart)
+### Architecture (flowchart)
 
 ```mermaid
 flowchart LR
-    User[Kullanıcı] -->|HTTP isteği| API[API Gateway]
-    API --> Auth[Auth Servisi]
-    API --> Orders[Sipariş Servisi]
+    User[User] -->|HTTP request| API[API Gateway]
+    API --> Auth[Auth Service]
+    API --> Orders[Order Service]
     Orders --> DB[(PostgreSQL)]
-    Orders -->|event| Queue[Kuyruk]
-    Queue --> Email[E-posta Servisi]
+    Orders -->|event| Queue[Queue]
+    Queue --> Email[Email Service]
 ```
 
-Notlar:
-- `[(...)]` veritabanı şekli, `[...]` normal kutu, `{...}` karar noktası
-- Yön: mimari için genelde `LR` (soldan sağa) daha okunaklı, süreç akışları için `TD` (yukarıdan aşağı)
-- Etiketli oklar (`-->|event|`) neyin aktığını gösterir, sadece "bağlı" demez
+Notes:
+- `[(...)]` is the database shape, `[...]` a normal box, `{...}` a decision point
+- Direction: `LR` (left-to-right) usually reads better for architecture, `TD` (top-down) for processes
+- Labeled arrows (`-->|event|`) show what flows, not just "connected"
 
-### İstek akışı (sequenceDiagram)
+### Request flow (sequenceDiagram)
 
 ```mermaid
 sequenceDiagram
-    participant U as Kullanıcı
+    participant U as User
     participant F as Frontend
     participant A as API
-    participant D as Veritabanı
+    participant D as Database
 
-    U->>F: "Kaydet" butonuna tıklar
+    U->>F: clicks "Save"
     F->>A: POST /orders
-    A->>A: Validasyon
+    A->>A: Validation
     A->>D: INSERT order
     D-->>A: order_id
     A-->>F: 201 Created
-    F-->>U: Başarı mesajı gösterir
+    F-->>U: shows success message
 ```
 
-Notlar:
-- `->>` senkron çağrı, `-->>` cevap/dönüş
-- Her ok gerçek bir kod satırına/fonksiyona karşılık gelmeli, uydurma
-- Katılımcı (`participant`) sayısı 6'yı geçmesin, geçiyorsa akışı böl
+Notes:
+- `->>` is a synchronous call, `-->>` a response/return
+- Every arrow must correspond to a real function/line of code — never invent
+- Keep participants to 6 or fewer; split the flow if you need more
 
-### Durum makinesi (stateDiagram-v2)
+### State machine (stateDiagram-v2)
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Beklemede
-    Beklemede --> Onaylandı: ödeme başarılı
-    Beklemede --> İptal: kullanıcı iptal etti
-    Onaylandı --> Kargoda: depo hazırladı
-    Kargoda --> Teslim: kurye teslim etti
-    İptal --> [*]
-    Teslim --> [*]
+    [*] --> Pending
+    Pending --> Confirmed: payment succeeded
+    Pending --> Cancelled: user cancelled
+    Confirmed --> Shipped: warehouse packed
+    Shipped --> Delivered: courier delivered
+    Cancelled --> [*]
+    Delivered --> [*]
 ```
 
-Notlar:
-- Geçiş etiketleri (`: ödeme başarılı`) neyin tetiklediğini gösterir — bu olmadan diyagram sadece kutu-ok yığını olur
-- `[*]` başlangıç/bitiş noktası
+Notes:
+- Transition labels (`: payment succeeded`) show what triggers the move — without them the diagram is just boxes and arrows
+- `[*]` marks start/end

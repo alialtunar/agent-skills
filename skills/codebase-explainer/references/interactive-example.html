@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +38,7 @@
   details.deep > summary { cursor:pointer; color:var(--muted); font-size:.9rem; font-weight:500; }
   details.deep .deep-body { margin-top:.6rem; font-size:.92rem; color:var(--muted); }
 
-  /* ---- Adım adım akış oynatıcı ---- */
+  /* ---- Step-through flow player ---- */
   .player { border:1px solid var(--border); border-radius:12px; padding:1.1rem; margin:1rem 0; background:#fff; }
   .stage { display:flex; align-items:center; justify-content:space-between; gap:.4rem; flex-wrap:wrap; margin-bottom:1rem; }
   .node {
@@ -66,7 +66,7 @@
   .btn.ghost { background:transparent; color:var(--accent); border:1px solid var(--accent); }
   .progress { margin-left:auto; color:var(--muted); font-size:.85rem; }
 
-  /* ---- Tahmin / quiz ---- */
+  /* ---- Predict-then-reveal quiz ---- */
   .quiz { border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; margin:1rem 0; background:#fff; }
   .quiz .q { font-weight:600; margin-bottom:.7rem; }
   .quiz .opts { display:flex; flex-direction:column; gap:.45rem; }
@@ -85,115 +85,115 @@
 <body>
 
 <h1>shop-platform</h1>
-<div class="subtitle">4 küçük servisten oluşan bir alışveriş sistemi — tıklaya tıklaya öğren</div>
+<div class="subtitle">A shopping system built from 4 small services — learn it by clicking through</div>
 
-<p>Bu, insanların internetten alışveriş yapmasını sağlayan bir sistem. Birisi hesap açar, giriş yapar, sepetindekileri satın alır — sipariş verince ona onay maili gider. Tek program değil, dört küçük parça birbiriyle konuşarak çalışıyor. Aşağıda önce siparişin sistemde nasıl yolculuk ettiğini <b>adım adım kendin oynatacaksın</b>, sonra birkaç soruyla gerçekten anlayıp anlamadığını test edeceksin.</p>
+<p>This is a system that lets people shop online. Someone creates an account, logs in, buys what's in their cart — and gets a confirmation email when the order goes through. It's not one program: four small parts talk to each other. Below, you'll first <b>drive the order's journey step by step yourself</b>, then test whether you really got it with a few questions.</p>
 
-<!-- ============ ADIM ADIM AKIŞ OYNATICI ============ -->
+<!-- ============ STEP-THROUGH FLOW PLAYER ============ -->
 <details class="section" open>
-  <summary>Ali'nin siparişinin yolculuğu — adım adım oynat</summary>
+  <summary>The journey of Alice's order — step through it</summary>
   <div class="section-body">
     <div class="player" id="player">
       <div class="stage">
-        <div class="node" data-n="ali"><span class="icon">🧑</span>Ali</div>
+        <div class="node" data-n="alice"><span class="icon">🧑</span>Alice</div>
         <div class="arrow" data-a="0">→</div>
         <div class="node" data-n="gw"><span class="icon">🚪</span>gateway</div>
         <div class="arrow" data-a="1">→</div>
         <div class="node" data-n="orders"><span class="icon">📦</span>orders</div>
         <div class="arrow" data-a="2">→</div>
-        <div class="node" data-n="mq"><span class="icon">📬</span>posta kutusu</div>
+        <div class="node" data-n="mq"><span class="icon">📬</span>mailbox</div>
         <div class="arrow" data-a="3">→</div>
         <div class="node" data-n="notif"><span class="icon">📮</span>notifications</div>
       </div>
-      <div class="narration" id="narration">Başlamak için <b>İleri</b>'ye bas. Ali az önce "Satın Al" butonuna bastı...</div>
+      <div class="narration" id="narration">Press <b>Next</b> to start. Alice just clicked "Buy"...</div>
       <div class="controls">
-        <button class="btn ghost" id="backBtn" disabled>← Geri</button>
-        <button class="btn" id="nextBtn">İleri →</button>
+        <button class="btn ghost" id="backBtn" disabled>← Back</button>
+        <button class="btn" id="nextBtn">Next →</button>
         <span class="progress" id="progress">0 / 6</span>
       </div>
     </div>
 
-    <div class="analogy">Posta kutusunu, restoranın mutfağa astığı sipariş fişi gibi düşün — garson fişi astı ve masasına döndü; mutfağın fişe ne zaman bakacağını bilmiyor bile.</div>
+    <div class="analogy">Think of the mailbox like the order ticket a waiter clips up for the kitchen — the waiter pins the ticket and walks away, not even knowing when the kitchen will look at it.</div>
 
     <details class="deep">
-      <summary>Teknik detaylar</summary>
+      <summary>Technical details</summary>
       <div class="deep-body">
-        <p><b>Gerçek bir bug:</b> posta kutusuna bırakılan notta Ali'nin kimlik numarası var, e-posta adresi yok. <code>notifications/src/templates/orderConfirmation.js</code> içindeki <code>to: order.userId</code> satırı bu numarayı email sanıyor — kodda grep ile doğrulandı, muhtemelen mail hiç gitmiyor.</p>
-        <p><b>Kırılgan nokta:</b> Sipariş DB'ye yazıldıktan sonra posta kutusuna not bırakma başarısız olursa geri alma (rollback) yok — sipariş var ama event yok durumu oluşabilir. İlgili kod: <code>orders/src/services/orderService.js</code></p>
+        <p><b>A real bug:</b> the note dropped in the mailbox contains Alice's user ID but no email address. The line <code>to: order.userId</code> in <code>notifications/src/templates/orderConfirmation.js</code> treats that ID as an email — verified with grep against the code; the mail most likely never sends.</p>
+        <p><b>Fragile spot:</b> if the order is written to the DB but dropping the note into the mailbox fails, there is no rollback — you can end up with an order in the DB and no event ever published. Relevant code: <code>orders/src/services/orderService.js</code></p>
       </div>
     </details>
   </div>
 </details>
 
-<!-- ============ TAHMİN SORULARI ============ -->
+<!-- ============ PREDICT-THEN-REVEAL QUESTIONS ============ -->
 <details class="section">
-  <summary>Kendini test et — 3 soru</summary>
+  <summary>Test yourself — 3 questions</summary>
   <div class="section-body">
 
     <div class="quiz">
-      <div class="q">1. notifications servisi tamamen çökmüş olsun. Ali "Satın Al"a basarsa ne olur?</div>
+      <div class="q">1. Suppose the notifications service is completely down. Alice clicks "Buy". What happens?</div>
       <div class="opts">
-        <button class="opt" data-ok="0">Sipariş başarısız olur, Ali hata görür</button>
-        <button class="opt" data-ok="1">Sipariş sorunsuz oluşur, sadece mail gitmez</button>
-        <button class="opt" data-ok="0">Sipariş oluşur ama Ali cevabı mail gidene kadar bekler</button>
+        <button class="opt" data-ok="0">The order fails and Alice sees an error</button>
+        <button class="opt" data-ok="1">The order succeeds normally, only the email never sends</button>
+        <button class="opt" data-ok="0">The order is created but Alice waits until the email is sent</button>
       </div>
-      <div class="explain">Doğru: sipariş sorunsuz oluşur. <code>orders</code> sadece posta kutusuna not bırakıp hemen "alındı" der — <code>notifications</code>'ın yaşayıp yaşamadığını hiç bilmez. İkisi birbirinden tamamen bağımsız.</div>
+      <div class="explain">Correct: the order succeeds. <code>orders</code> just drops a note in the mailbox and immediately says "received" — it never knows whether <code>notifications</code> is alive. The two are fully independent.</div>
     </div>
 
     <div class="quiz">
-      <div class="q">2. auth servisi JWT_SECRET'ını değiştirdi ama orders eski değerde kaldı. Ne olur?</div>
+      <div class="q">2. auth rotates its JWT_SECRET, but orders keeps the old value. What happens?</div>
       <div class="opts">
-        <button class="opt" data-ok="0">Hiçbir şey olmaz, her servis kendi secret'ını kullanır</button>
-        <button class="opt" data-ok="0">Sadece yeni kayıt olanlar etkilenir</button>
-        <button class="opt" data-ok="1">Yeni giriş yapan herkesin siparişi 401 ile reddedilir</button>
+        <button class="opt" data-ok="0">Nothing — each service uses its own secret</button>
+        <button class="opt" data-ok="0">Only newly registered users are affected</button>
+        <button class="opt" data-ok="1">Every newly logged-in user gets their orders rejected with 401</button>
       </div>
-      <div class="explain">Doğru: auth yeni secret ile kart basar, orders eski secret ile kontrol eder — imza tutmaz, tüm yeni token'lar reddedilir. Bu iki servisin paylaştığı tek gizli değer bu, birlikte güncellenmeli.</div>
+      <div class="explain">Correct: auth signs wristbands with the new secret, orders checks them with the old one — signatures don't match, so all new tokens are rejected. This is the one secret the two services share; it must be rotated together.</div>
     </div>
 
     <div class="quiz">
-      <div class="q">3. "Mail gitmiyor" şikayeti geldi. İlk hangi servise bakarsın?</div>
+      <div class="q">3. A "my email never arrived" complaint comes in. Which service do you look at first?</div>
       <div class="opts">
-        <button class="opt" data-ok="0">gateway — tüm istekler oradan geçiyor</button>
-        <button class="opt" data-ok="1">notifications — mail işi tamamen onda</button>
-        <button class="opt" data-ok="0">auth — belki token sorunu vardır</button>
+        <button class="opt" data-ok="0">gateway — all requests pass through it</button>
+        <button class="opt" data-ok="1">notifications — email is entirely its job</button>
+        <button class="opt" data-ok="0">auth — maybe it's a token problem</button>
       </div>
-      <div class="explain">Doğru: mail tamamen <code>notifications</code>'ın işi. gateway ve auth'un mail ile hiçbir bağlantısı yok. (Bonus: bu projede gerçekten bir mail bug'ı var — yukarıdaki "Teknik detaylar"a bak.)</div>
+      <div class="explain">Correct: email is entirely <code>notifications</code>' job; gateway and auth have nothing to do with mail. (Bonus: this project genuinely has an email bug — see "Technical details" above.)</div>
     </div>
 
   </div>
 </details>
 
-<!-- ============ DİĞER BÖLÜMLER ============ -->
+<!-- ============ OTHER SECTIONS ============ -->
 <details class="section">
-  <summary>Giriş yapma / kayıt olma nasıl çalışıyor</summary>
+  <summary>How login / registration works</summary>
   <div class="section-body">
-    <p><code>auth</code> servisi kimlik kartı basan yer: kayıtta şifreyi hash'leyip saklar, girişte kontrol edip bir JWT verir.</p>
-    <div class="analogy">JWT'yi etkinlik bileziği gibi düşün — bir kere doğrulanıp takıldıktan sonra her kapıda kimlik sormaya gerek kalmaz, ama bileziğin süresi dolunca (burada 2 saat) yenisi gerekir.</div>
+    <p>The <code>auth</code> service is the ID-card office: on registration it hashes and stores the password, on login it checks the password and hands out a JWT.</p>
+    <div class="analogy">Think of the JWT as an event wristband — once you're checked and banded, no one asks for your ID at every door, but the band expires (here: 2 hours) and you need a new one.</div>
     <details class="deep">
-      <summary>Teknik detaylar</summary>
+      <summary>Technical details</summary>
       <div class="deep-body">
-        <p>Token <code>auth/src/services/authService.js</code> içinde <code>expiresIn: '2h'</code> ile imzalanıyor; doğrulama <code>orders/src/services/authMiddleware.js</code>'te. Şifreler bcrypt (10 tur) ile hash'leniyor, düz metin hiçbir yerde saklanmıyor.</p>
+        <p>The token is signed in <code>auth/src/services/authService.js</code> with <code>expiresIn: '2h'</code>; verification lives in <code>orders/src/services/authMiddleware.js</code>. Passwords are hashed with bcrypt (10 rounds); plaintext is never stored.</p>
       </div>
     </details>
   </div>
 </details>
 
 <details class="section">
-  <summary>Nasıl çalıştırılır</summary>
+  <summary>How to run it</summary>
   <div class="section-body">
-    <p>Her servis kendi klasöründe <code>npm install</code> ile kurulur; hepsi için bir PostgreSQL ve bir RabbitMQ ayakta olmalı.</p>
+    <p>Each service installs with <code>npm install</code> in its own folder; a running PostgreSQL and RabbitMQ are required for all of them.</p>
   </div>
 </details>
 
 <script>
-// ---- Akış oynatıcı ----
+// ---- Flow player ----
 const steps = [
-  { node:'ali',    arrow:null, text:'<b>Ali</b> sepetindeki 2 ürün için "Satın Al"a bastı. Tarayıcısı, cebindeki kimlik kartıyla (JWT) birlikte bir istek gönderiyor.' },
-  { node:'gw',     arrow:0,    text:'İstek önce <b>gateway</b>\'e (giriş kapısı) geldi. Gateway hiçbir iş yapmıyor — adrese bakıp "bu bir sipariş isteği" diyor ve orders\'a yönlendiriyor.' },
-  { node:'orders', arrow:1,    text:'<b>orders</b> önce kimlik kartını kontrol ediyor: imza gerçek mi, süresi geçmiş mi? Geçerliyse karttan Ali\'nin numarasını okuyor.' },
-  { node:'orders', arrow:null, text:'<b>orders</b> siparişi veritabanına yazıyor ve bir sipariş numarası alıyor. Ali\'nin siparişi artık kalıcı olarak kayıtlı.' },
-  { node:'mq',     arrow:2,    text:'<b>orders</b>, posta kutusuna "sipariş oluştu" notunu bırakıyor ve Ali\'ye hemen "Siparişiniz alındı!" diyor. Dikkat: mail daha gitmedi — Ali beklemiyor.' },
-  { node:'notif',  arrow:3,    text:'<b>notifications</b> kutuyu kontrol ediyor, notu görüyor ve onay mailini gönderiyor. Bu adım tamamen arka planda; Ali çoktan "alındı" ekranını gördü bile.' },
+  { node:'alice',  arrow:null, text:'<b>Alice</b> clicked "Buy" for the 2 items in her cart. Her browser sends a request along with the ID card (JWT) in her pocket.' },
+  { node:'gw',     arrow:0,    text:'The request first hits the <b>gateway</b> (the front door). The gateway does no work of its own — it looks at the address, says "this is an order request", and forwards it to orders.' },
+  { node:'orders', arrow:1,    text:'<b>orders</b> first checks the ID card: is the signature real, has it expired? If valid, it reads Alice\'s user number off the card.' },
+  { node:'orders', arrow:null, text:'<b>orders</b> writes the order to the database and gets back an order number. Alice\'s order is now permanently recorded.' },
+  { node:'mq',     arrow:2,    text:'<b>orders</b> drops an "order created" note into the mailbox and immediately tells Alice "Order received!". Note: no email has been sent yet — and Alice isn\'t waiting for one.' },
+  { node:'notif',  arrow:3,    text:'<b>notifications</b> checks the mailbox, sees the note, and sends the confirmation email. This all happens in the background; Alice already saw the "received" screen.' },
 ];
 let cur = -1;
 const nodes = document.querySelectorAll('.node');
@@ -216,12 +216,12 @@ function render() {
     }
   }
   narration.innerHTML = cur === -1
-    ? 'Başlamak için <b>İleri</b>\'ye bas. Ali az önce "Satın Al" butonuna bastı...'
+    ? 'Press <b>Next</b> to start. Alice just clicked "Buy"...'
     : steps[cur].text;
   progress.textContent = `${cur+1 < 0 ? 0 : cur+1} / ${steps.length}`;
   nextBtn.disabled = cur === steps.length - 1;
   backBtn.disabled = cur === -1;
-  nextBtn.textContent = cur === steps.length - 1 ? 'Bitti ✓' : 'İleri →';
+  nextBtn.textContent = cur === steps.length - 1 ? 'Done ✓' : 'Next →';
 }
 nextBtn.onclick = () => { if (cur < steps.length - 1) { cur++; render(); } };
 backBtn.onclick = () => { if (cur > -1) { cur--; render(); } };

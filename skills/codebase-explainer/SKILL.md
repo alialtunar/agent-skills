@@ -1,78 +1,78 @@
 ---
 name: codebase-explainer
-description: Explain a codebase or flow as an interactive active-learning HTML page: step-through flows, predict-then-reveal quizzes, collapsible depth. For onboarding, 'explain this code', 'bu projeyi anlat'.
+description: Explain a codebase or flow as an interactive active-learning HTML page: step-through flows, predict-then-reveal quizzes, collapsible depth. For onboarding, "explain this code", "how does X work".
 ---
 
 # Codebase Explainer
 
-Amaç: kişinin kafasında **hiçbir boşluk kalmadan**, sistemi zihninde canlandırarak anlamasını sağlamak. Bu, pasif okumayla olmaz — kişi akışı kendisi yürütmeli, tahmin etmeli, yanılmalı, düzeltmeli. Üç problem, üç çözüm:
+Goal: the reader ends up with **no gaps in their mental model** — they can picture the system running. That never happens through passive reading; the reader must walk the flow themselves, make predictions, get them wrong, and correct them. Three problems, three fixes:
 
-1. **İçerik karmaşası** → Feynman tekniği (düz dil + benzetme + izlenebilir gerçek örnek)
-2. **Sunum karmaşası** → katmanlı sunum (özet hep açık, detay tıklayınca)
-3. **Pasif okuma** → aktif öğrenme mekanizmaları (adım adım oynatıcı + tahmin soruları)
+1. **Content overload** → Feynman technique (plain language + one analogy + one traced real example)
+2. **Presentation overload** → layered disclosure (overview always visible, detail on click)
+3. **Passive reading** → active-learning mechanics (step-through player + predict-then-reveal questions)
 
-## Çekirdek: Üç Aktif Öğrenme Mekanizması
+## Core: Three Active-Learning Mechanics
 
-Varsayılan çıktı, tek dosyalık etkileşimli bir HTML sayfası. İçinde:
+Default output is a single-file interactive HTML page containing:
 
-**1. Adım adım akış oynatıcısı** — en önemli akış (örn. "kullanıcı satın aldığında ne olur") statik diyagram olarak DEĞİL, kişinin "İleri/Geri" butonlarıyla kendisinin yürüttüğü bir animasyon olarak verilir. Her adımda: aktif bileşen vurgulanır, geçilmiş bileşenler işaretli kalır, o adımda tam olarak ne olduğu 1-2 cümleyle anlatılır. Kişi isteğin sistemde nereye gittiğini gözüyle izler — uygulama kafasında böyle canlanır.
+**1. Step-through flow player** — the most important flow (e.g. "what happens when the user clicks Buy") is NOT a static diagram. It's an animation the reader drives with Next/Back buttons. On each step: the active component is highlighted, completed components stay marked, and 1–2 sentences narrate exactly what happens at that step. The reader watches the request travel through the system with their own eyes — that's how the app comes alive in their head.
 
-**2. Tahmin-sonra-cevap soruları** — 2-4 soru, her biri sistemin davranışıyla ilgili bir senaryo sorar ("X servisi çökmüşse ne olur?"). Kişi önce tahmin eder (şıkka tıklar), sonra doğru cevap + neden açıklaması görünür. Sorular ezber değil **davranış** sorgulamalı: "hangi dosyada?" değil, "bu durumda sistem ne yapar?". Yanlış şıklar makul olmalı — bariz yanlış şık öğretmez.
+**2. Predict-then-reveal questions** — 2–4 questions, each posing a scenario about system behavior ("what happens if service X is down?"). The reader predicts first (clicks an option), then sees the correct answer plus the why. Questions must probe **behavior**, not trivia: not "which file?", but "what does the system do in this case?". Wrong options must be plausible — an obviously-wrong option teaches nothing.
 
-**3. Katmanlı derinlik** — hiçbir detay silinmez, katlanır:
-- Katman 1 (hep açık): ne işe yarar + genel resim
-- Katman 2 (tıklayınca açılır): her akış/servis/konu kendi bölümünde
-- Katman 3 (bölüm içinde ayrıca katlı, "Teknik detaylar"): dosya adları, edge case'ler, kırılgan noktalar, bulunan buglar — istediğin kadar derin
+**3. Layered depth** — no detail is deleted; it's folded:
+- Layer 1 (always open): what this does + the big picture
+- Layer 2 (opens on click): each flow/service/topic in its own section
+- Layer 3 (folded inside Layer 2, "Technical details"): file names, edge cases, fragile spots, bugs found during analysis — as deep as needed
 
-## Yazım Kuralı: Feynman Üçlüsü
+## Writing Rule: The Feynman Trio
 
-Her açıklama bloğu için:
-1. **Düz dil** — jargon yoksa hiç kullanma, varsa hemen yanında açıkla
-2. **Bir benzetme** — mekanizmanın gerçek davranışını yansıtan, günlük hayattan (message queue → restoranın sipariş fişi; JWT → etkinlik bileziği; gateway → binanın giriş kapısı gibi)
-3. **İsimli, somut örnek** — "kullanıcı" değil "Ali"; "bir istek" değil "sepetindeki 2 ürün". Soyut "bu modül şunu yönetir" cümlesi yasak.
+For every explanation block:
+1. **Plain language** — avoid jargon; if unavoidable, define it inline immediately
+2. **One analogy** — from everyday life, and it must reflect how the mechanism actually behaves (message queue → a restaurant's order ticket rail; JWT → an event wristband; gateway → a building's front door)
+3. **A named, concrete example** — not "the user" but "Alice"; not "a request" but "the 2 items in her cart". Abstract sentences like "this module manages X" are banned.
 
-## Adım 0: Mod ve Format
+## Step 0: Mode and Format
 
-- Genel istek ("bu projeyi anlat") → **Tam Anlatım**: oynatıcı en kritik akış için, quiz tüm sistemi kapsar, her servis bir Katman 2 bölümü
-- Spesifik soru ("X nasıl çalışıyor") → **Odaklı Cevap**: oynatıcı o akış için, 1-2 soru, tek konu — kapsam dışına çıkma
-- Format: sohbet ortamında **etkileşimli HTML** (varsayılan). Kullanıcı repo'ya kaydedilecek dosya isterse **Markdown + `<details>` katmanları + mermaid** (GitHub/GitLab native render eder; oynatıcı ve quiz markdown'da olmaz, onların yerine sequence diagram + "kendine sor" soruları düz metin olarak girer).
+- General request ("explain this project") → **Full Walkthrough**: player covers the most critical flow, quiz covers the whole system, each service gets a Layer 2 section
+- Specific question ("how does X work") → **Focused Answer**: player for that flow only, 1–2 questions, single topic — do not expand scope
+- Format: in chat contexts, **interactive HTML** (default). If the user wants a file saved into the repo, use **Markdown + `<details>` layers + mermaid** (GitHub/GitLab render these natively; the player and quiz don't exist in markdown — replace them with a sequence diagram plus "ask yourself" questions in plain text).
 
-## Adım 1: Keşif — Sadece İhtiyacın Olanı Oku
+## Step 1: Recon — Read Only What You Need
 
-- Dizin yapısı + paket dosyasından tech stack
-- Giriş noktalarını bul (route'lar, main/index)
-- Büyük/çoklu servisli projede: önce her servisin sadece giriş noktası, sonra servisler arası sınırlar (HTTP mi kuyruk mu paylaşılan DB mi), sonra en kritik 1-2 akışı uçtan uca gerçekten oku
-- **Her teknik iddiayı kodda grep ile doğrula.** Oynatıcıdaki her adım, quiz'deki her doğru cevap gerçek koda dayanmalı. Doğrulayamadığını yazma.
-- Odaklı Cevap'ta sadece soruyla ilgili kısmı tara
+- Directory structure + package manifest for the tech stack
+- Find entry points (routes, main/index)
+- Large/multi-service projects: first read only each service's entry point, then map the boundaries between services (HTTP? queue? shared DB?), then pick the 1–2 most critical flows and actually read them end to end
+- **Verify every technical claim in the code with grep.** Every player step and every quiz answer must be grounded in real code. If you can't verify it, don't write it.
+- In Focused Answer mode, scan only what the question touches
 
-## Adım 2: HTML'i Kur
+## Step 2: Build the HTML
 
-Çalışan tam örnek: `references/interactive-example.html` — 4 servisli bir örnek projeye uygulanmış hali; oynatıcının, quiz'in ve katmanların çalışan kodunu içerir. Bunu şablon olarak kullan, içeriği projeye göre değiştir. Teknik notlar:
+Full working example: `references/interactive-example.html` — the skill applied to a sample 4-service project; contains the working code for the player, the quiz, and the layers. Use it as the template and swap in the project's content. Technical notes:
 
-- Tek dosya, vanilla JS — framework yok, CDN bağımlılığı yok (oynatıcı ve quiz saf JS/CSS; mermaid gerekiyorsa cdnjs'ten yüklenebilir ama oynatıcı zaten mermaid'den daha iyi anlattığı için ana akışta gerek kalmaz)
-- Katmanlar native `<details>/<summary>` (erişilebilir, JS'siz)
-- Oynatıcı: bileşenler yatay kutu dizisi, `steps` array'inde her adımın hangi bileşeni vurguladığı + anlatım metni; İleri/Geri butonları + ilerleme sayacı
-- Quiz: her soru bir kart; şıkka tıklayınca doğru yeşil, seçilen yanlışsa kırmızı, açıklama görünür
-- Sade görünüm: ~760px okuma genişliği, tek vurgu rengi, dekorasyon yok
+- Single file, vanilla JS — no frameworks, no CDN dependencies (player and quiz are pure JS/CSS; mermaid can be loaded from cdnjs if needed, but the player usually explains the main flow better than a diagram would)
+- Layers use native `<details>/<summary>` (accessible, no JS)
+- Player: components as a horizontal row of boxes; a `steps` array maps each step to the component it highlights + its narration text; Next/Back buttons + progress counter
+- Quiz: one card per question; clicking an option marks the correct one green, the chosen wrong one red, and reveals the explanation
+- Clean look: ~760px reading width, one accent color, no decoration
 
-Oynatıcı adımları yazarken: her adım tek bir olayı anlatsın; adım sayısı 4-8 arası ideal; anlatım metni o adımda **neyin neden olduğunu** söylesin, sadece "A B'ye istek atar" değil.
+When writing player steps: one event per step; 4–8 steps is the sweet spot; narration must say **what happens and why**, not just "A calls B".
 
-## Adım 3: Diyagram (gerekirse)
+## Step 3: Diagrams (if needed)
 
-Oynatıcı zaten ana akışı anlattığı için diyagram ihtiyacı azalır. Yine de genel mimari resmi veya ikincil akışlar için gerekiyorsa `references/diagram-guide.md`'deki tip seçimine uy. 6-8 düğümü aşan diyagramı böl.
+The player already covers the main flow, so diagram needs drop. For an overall architecture picture or secondary flows, follow the type-selection guide in `references/diagram-guide.md`. Split any diagram exceeding 6–8 nodes.
 
-## Adım 4: Kaydet / Göster
+## Step 4: Save / Present
 
-- HTML → `present_files` ile göster (chat artifact'i); kullanıcı isterse diske de kaydet
-- Markdown (repo'ya) → küçük proje: `docs/PROJECT_GUIDE.md`; büyük proje: `docs/PROJECT_GUIDE.md` + `docs/services/<ad>.md`; odaklı cevap: `docs/qna/<konu>.md`
-- Var olan dosyanın üzerine yazmadan önce sor
+- HTML → show via the chat's file-presentation mechanism; also save to disk if the user asks
+- Markdown (into a repo) → small project: `docs/PROJECT_GUIDE.md`; large project: `docs/PROJECT_GUIDE.md` + `docs/services/<name>.md`; focused answer: `docs/qna/<topic>.md`
+- Ask before overwriting an existing file
 
-## Son Kontrol
+## Final Check
 
-- Oynatıcıyı baştan sona yürüten biri, akışı kimseye sormadan bir başkasına anlatabilir mi?
-- Quiz soruları davranış mı sorguluyor, ezber mi? Yanlış şıklar makul mü?
-- Katman 1'i okuyan (hiç tıklamayan) biri temel fikri anlar mı? Katman 3'e inen her detayı bulur mu?
-- Her iddia kodda doğrulandı mı?
-- Herhangi bir yer "rapor" gibi hissettiriyor mu — ediyorsa yeniden yaz
+- Could someone who walked the player start-to-finish explain the flow to a colleague without help?
+- Do quiz questions probe behavior rather than trivia? Are wrong options plausible?
+- Does a reader who never clicks anything (Layer 1 only) still get the core idea? Does a reader who digs to Layer 3 find every detail?
+- Is every claim verified in the code?
+- Does any part read like a report? If so, rewrite it.
 
-Biri "hayır" ise düzelt, sonra teslim et.
+If any answer is "no", fix it before delivering.
