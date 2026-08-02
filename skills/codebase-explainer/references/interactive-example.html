@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #5a5a5a;
+    --accent: #2d6a4f;
+    --accent-soft: #e7f2ec;
+    --active: #f0b429;
+    --active-soft: #fdf3dc;
+    --border: #e5e5e0;
+    --surface: #faf9f6;
+    --done: #b9d8c9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65; max-width: 780px; margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: .3rem; }
+  .subtitle { color: var(--muted); margin-bottom: 1.5rem; }
+  code { background:#f0efe9; padding:.1rem .35rem; border-radius:4px; font-size:.88em; }
+  .analogy { border-left:3px solid var(--accent); padding-left:.9rem; margin:.9rem 0; color:var(--muted); font-style:italic; }
+
+  details.section { border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; background:var(--surface); overflow:hidden; }
+  details.section > summary { padding:.85rem 1.1rem; cursor:pointer; font-weight:600; list-style:none; display:flex; align-items:center; gap:.5rem; }
+  details.section > summary::-webkit-details-marker { display:none; }
+  details.section > summary::before { content:"▸"; color:var(--accent); transition:transform .15s; font-size:.8rem; }
+  details.section[open] > summary::before { transform:rotate(90deg); }
+  .section-body { padding: 0 1.1rem 1.1rem; }
+  details.deep { margin-top:.9rem; border-top:1px dashed var(--border); padding-top:.7rem; }
+  details.deep > summary { cursor:pointer; color:var(--muted); font-size:.9rem; font-weight:500; }
+  details.deep .deep-body { margin-top:.6rem; font-size:.92rem; color:var(--muted); }
+
+  /* ---- Adım adım akış oynatıcı ---- */
+  .player { border:1px solid var(--border); border-radius:12px; padding:1.1rem; margin:1rem 0; background:#fff; }
+  .stage { display:flex; align-items:center; justify-content:space-between; gap:.4rem; flex-wrap:wrap; margin-bottom:1rem; }
+  .node {
+    flex:1; min-width:90px; text-align:center; padding:.7rem .4rem;
+    border:2px solid var(--border); border-radius:10px; font-size:.85rem; font-weight:600;
+    transition: all .3s; background:#fff;
+  }
+  .node .icon { font-size:1.3rem; display:block; margin-bottom:.15rem; }
+  .node.active { border-color:var(--active); background:var(--active-soft); transform:scale(1.06); }
+  .node.done { border-color:var(--done); background:var(--accent-soft); }
+  .arrow { color:#c9c9c2; font-size:1.1rem; transition:color .3s; }
+  .arrow.active { color:var(--active); }
+  .arrow.done { color:var(--accent); }
+  .narration {
+    min-height:3.6rem; background:var(--surface); border-radius:8px;
+    padding:.8rem 1rem; font-size:.95rem; margin-bottom:.8rem;
+  }
+  .narration b { color:var(--accent); }
+  .controls { display:flex; gap:.5rem; align-items:center; }
+  .btn {
+    background:var(--accent); color:#fff; border:none; border-radius:8px;
+    padding:.55rem 1.1rem; font-size:.92rem; font-weight:600; cursor:pointer;
+  }
+  .btn:disabled { background:#c9c9c2; cursor:default; }
+  .btn.ghost { background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  .progress { margin-left:auto; color:var(--muted); font-size:.85rem; }
+
+  /* ---- Tahmin / quiz ---- */
+  .quiz { border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; margin:1rem 0; background:#fff; }
+  .quiz .q { font-weight:600; margin-bottom:.7rem; }
+  .quiz .opts { display:flex; flex-direction:column; gap:.45rem; }
+  .opt {
+    text-align:left; padding:.6rem .9rem; border:1.5px solid var(--border);
+    border-radius:8px; background:var(--surface); cursor:pointer; font-size:.93rem;
+    transition:all .15s;
+  }
+  .opt:hover { border-color:var(--accent); }
+  .opt.correct { border-color:var(--accent); background:var(--accent-soft); }
+  .opt.wrong { border-color:#d9776b; background:#fbeae8; }
+  .explain { margin-top:.7rem; font-size:.9rem; color:var(--muted); display:none; }
+  .explain.show { display:block; }
+</style>
+</head>
+<body>
+
+<h1>shop-platform</h1>
+<div class="subtitle">4 küçük servisten oluşan bir alışveriş sistemi — tıklaya tıklaya öğren</div>
+
+<p>Bu, insanların internetten alışveriş yapmasını sağlayan bir sistem. Birisi hesap açar, giriş yapar, sepetindekileri satın alır — sipariş verince ona onay maili gider. Tek program değil, dört küçük parça birbiriyle konuşarak çalışıyor. Aşağıda önce siparişin sistemde nasıl yolculuk ettiğini <b>adım adım kendin oynatacaksın</b>, sonra birkaç soruyla gerçekten anlayıp anlamadığını test edeceksin.</p>
+
+<!-- ============ ADIM ADIM AKIŞ OYNATICI ============ -->
+<details class="section" open>
+  <summary>Ali'nin siparişinin yolculuğu — adım adım oynat</summary>
+  <div class="section-body">
+    <div class="player" id="player">
+      <div class="stage">
+        <div class="node" data-n="ali"><span class="icon">🧑</span>Ali</div>
+        <div class="arrow" data-a="0">→</div>
+        <div class="node" data-n="gw"><span class="icon">🚪</span>gateway</div>
+        <div class="arrow" data-a="1">→</div>
+        <div class="node" data-n="orders"><span class="icon">📦</span>orders</div>
+        <div class="arrow" data-a="2">→</div>
+        <div class="node" data-n="mq"><span class="icon">📬</span>posta kutusu</div>
+        <div class="arrow" data-a="3">→</div>
+        <div class="node" data-n="notif"><span class="icon">📮</span>notifications</div>
+      </div>
+      <div class="narration" id="narration">Başlamak için <b>İleri</b>'ye bas. Ali az önce "Satın Al" butonuna bastı...</div>
+      <div class="controls">
+        <button class="btn ghost" id="backBtn" disabled>← Geri</button>
+        <button class="btn" id="nextBtn">İleri →</button>
+        <span class="progress" id="progress">0 / 6</span>
+      </div>
+    </div>
+
+    <div class="analogy">Posta kutusunu, restoranın mutfağa astığı sipariş fişi gibi düşün — garson fişi astı ve masasına döndü; mutfağın fişe ne zaman bakacağını bilmiyor bile.</div>
+
+    <details class="deep">
+      <summary>Teknik detaylar</summary>
+      <div class="deep-body">
+        <p><b>Gerçek bir bug:</b> posta kutusuna bırakılan notta Ali'nin kimlik numarası var, e-posta adresi yok. <code>notifications/src/templates/orderConfirmation.js</code> içindeki <code>to: order.userId</code> satırı bu numarayı email sanıyor — kodda grep ile doğrulandı, muhtemelen mail hiç gitmiyor.</p>
+        <p><b>Kırılgan nokta:</b> Sipariş DB'ye yazıldıktan sonra posta kutusuna not bırakma başarısız olursa geri alma (rollback) yok — sipariş var ama event yok durumu oluşabilir. İlgili kod: <code>orders/src/services/orderService.js</code></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ============ TAHMİN SORULARI ============ -->
+<details class="section">
+  <summary>Kendini test et — 3 soru</summary>
+  <div class="section-body">
+
+    <div class="quiz">
+      <div class="q">1. notifications servisi tamamen çökmüş olsun. Ali "Satın Al"a basarsa ne olur?</div>
+      <div class="opts">
+        <button class="opt" data-ok="0">Sipariş başarısız olur, Ali hata görür</button>
+        <button class="opt" data-ok="1">Sipariş sorunsuz oluşur, sadece mail gitmez</button>
+        <button class="opt" data-ok="0">Sipariş oluşur ama Ali cevabı mail gidene kadar bekler</button>
+      </div>
+      <div class="explain">Doğru: sipariş sorunsuz oluşur. <code>orders</code> sadece posta kutusuna not bırakıp hemen "alındı" der — <code>notifications</code>'ın yaşayıp yaşamadığını hiç bilmez. İkisi birbirinden tamamen bağımsız.</div>
+    </div>
+
+    <div class="quiz">
+      <div class="q">2. auth servisi JWT_SECRET'ını değiştirdi ama orders eski değerde kaldı. Ne olur?</div>
+      <div class="opts">
+        <button class="opt" data-ok="0">Hiçbir şey olmaz, her servis kendi secret'ını kullanır</button>
+        <button class="opt" data-ok="0">Sadece yeni kayıt olanlar etkilenir</button>
+        <button class="opt" data-ok="1">Yeni giriş yapan herkesin siparişi 401 ile reddedilir</button>
+      </div>
+      <div class="explain">Doğru: auth yeni secret ile kart basar, orders eski secret ile kontrol eder — imza tutmaz, tüm yeni token'lar reddedilir. Bu iki servisin paylaştığı tek gizli değer bu, birlikte güncellenmeli.</div>
+    </div>
+
+    <div class="quiz">
+      <div class="q">3. "Mail gitmiyor" şikayeti geldi. İlk hangi servise bakarsın?</div>
+      <div class="opts">
+        <button class="opt" data-ok="0">gateway — tüm istekler oradan geçiyor</button>
+        <button class="opt" data-ok="1">notifications — mail işi tamamen onda</button>
+        <button class="opt" data-ok="0">auth — belki token sorunu vardır</button>
+      </div>
+      <div class="explain">Doğru: mail tamamen <code>notifications</code>'ın işi. gateway ve auth'un mail ile hiçbir bağlantısı yok. (Bonus: bu projede gerçekten bir mail bug'ı var — yukarıdaki "Teknik detaylar"a bak.)</div>
+    </div>
+
+  </div>
+</details>
+
+<!-- ============ DİĞER BÖLÜMLER ============ -->
+<details class="section">
+  <summary>Giriş yapma / kayıt olma nasıl çalışıyor</summary>
+  <div class="section-body">
+    <p><code>auth</code> servisi kimlik kartı basan yer: kayıtta şifreyi hash'leyip saklar, girişte kontrol edip bir JWT verir.</p>
+    <div class="analogy">JWT'yi etkinlik bileziği gibi düşün — bir kere doğrulanıp takıldıktan sonra her kapıda kimlik sormaya gerek kalmaz, ama bileziğin süresi dolunca (burada 2 saat) yenisi gerekir.</div>
+    <details class="deep">
+      <summary>Teknik detaylar</summary>
+      <div class="deep-body">
+        <p>Token <code>auth/src/services/authService.js</code> içinde <code>expiresIn: '2h'</code> ile imzalanıyor; doğrulama <code>orders/src/services/authMiddleware.js</code>'te. Şifreler bcrypt (10 tur) ile hash'leniyor, düz metin hiçbir yerde saklanmıyor.</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<details class="section">
+  <summary>Nasıl çalıştırılır</summary>
+  <div class="section-body">
+    <p>Her servis kendi klasöründe <code>npm install</code> ile kurulur; hepsi için bir PostgreSQL ve bir RabbitMQ ayakta olmalı.</p>
+  </div>
+</details>
+
+<script>
+// ---- Akış oynatıcı ----
+const steps = [
+  { node:'ali',    arrow:null, text:'<b>Ali</b> sepetindeki 2 ürün için "Satın Al"a bastı. Tarayıcısı, cebindeki kimlik kartıyla (JWT) birlikte bir istek gönderiyor.' },
+  { node:'gw',     arrow:0,    text:'İstek önce <b>gateway</b>\'e (giriş kapısı) geldi. Gateway hiçbir iş yapmıyor — adrese bakıp "bu bir sipariş isteği" diyor ve orders\'a yönlendiriyor.' },
+  { node:'orders', arrow:1,    text:'<b>orders</b> önce kimlik kartını kontrol ediyor: imza gerçek mi, süresi geçmiş mi? Geçerliyse karttan Ali\'nin numarasını okuyor.' },
+  { node:'orders', arrow:null, text:'<b>orders</b> siparişi veritabanına yazıyor ve bir sipariş numarası alıyor. Ali\'nin siparişi artık kalıcı olarak kayıtlı.' },
+  { node:'mq',     arrow:2,    text:'<b>orders</b>, posta kutusuna "sipariş oluştu" notunu bırakıyor ve Ali\'ye hemen "Siparişiniz alındı!" diyor. Dikkat: mail daha gitmedi — Ali beklemiyor.' },
+  { node:'notif',  arrow:3,    text:'<b>notifications</b> kutuyu kontrol ediyor, notu görüyor ve onay mailini gönderiyor. Bu adım tamamen arka planda; Ali çoktan "alındı" ekranını gördü bile.' },
+];
+let cur = -1;
+const nodes = document.querySelectorAll('.node');
+const arrows = document.querySelectorAll('.arrow');
+const narration = document.getElementById('narration');
+const nextBtn = document.getElementById('nextBtn');
+const backBtn = document.getElementById('backBtn');
+const progress = document.getElementById('progress');
+
+function render() {
+  nodes.forEach(n => n.classList.remove('active','done'));
+  arrows.forEach(a => a.classList.remove('active','done'));
+  for (let i = 0; i <= cur; i++) {
+    const s = steps[i];
+    const el = document.querySelector(`.node[data-n="${s.node}"]`);
+    if (i === cur) el.classList.add('active'); else el.classList.add('done');
+    if (s.arrow !== null) {
+      const ar = document.querySelector(`.arrow[data-a="${s.arrow}"]`);
+      ar.classList.add(i === cur ? 'active' : 'done');
+    }
+  }
+  narration.innerHTML = cur === -1
+    ? 'Başlamak için <b>İleri</b>\'ye bas. Ali az önce "Satın Al" butonuna bastı...'
+    : steps[cur].text;
+  progress.textContent = `${cur+1 < 0 ? 0 : cur+1} / ${steps.length}`;
+  nextBtn.disabled = cur === steps.length - 1;
+  backBtn.disabled = cur === -1;
+  nextBtn.textContent = cur === steps.length - 1 ? 'Bitti ✓' : 'İleri →';
+}
+nextBtn.onclick = () => { if (cur < steps.length - 1) { cur++; render(); } };
+backBtn.onclick = () => { if (cur > -1) { cur--; render(); } };
+render();
+
+// ---- Quiz ----
+document.querySelectorAll('.quiz').forEach(quiz => {
+  const opts = quiz.querySelectorAll('.opt');
+  const explain = quiz.querySelector('.explain');
+  opts.forEach(opt => {
+    opt.onclick = () => {
+      opts.forEach(o => {
+        o.disabled = true;
+        if (o.dataset.ok === '1') o.classList.add('correct');
+      });
+      if (opt.dataset.ok !== '1') opt.classList.add('wrong');
+      explain.classList.add('show');
+    };
+  });
+});
+</script>
+</body>
+</html>
