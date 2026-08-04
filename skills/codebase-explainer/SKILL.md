@@ -7,9 +7,29 @@ description: "Explain a codebase as an interactive three-altitude HTML guide (ov
 
 Goal: the reader ends up with a running mental model of the system — they can picture the machine working, recognize it on their own screen, and drill into the real code of any part without being buried in it.
 
-Two deliverable modes, same content standards. Pick by destination:
-- **HTML mode** — an interactive artifact for reading in chat/browser (three-altitude ladder below).
-- **Markdown mode** — a guide that lives in the repo (`docs/PROJECT_GUIDE.md`) and renders natively on GitHub. Use when the user wants documentation, not just an explanation.
+Four deliverable modes, same content standards — chosen with the person (Step 0):
+- **Interactive Guide (HTML)** — three-altitude ladder, detailed below.
+- **Project Guide (Markdown)** — lives in the repo (`docs/PROJECT_GUIDE.md`), renders natively on GitHub.
+- **Code Tour (HTML)** — guided reading of the real source, stop by stop.
+- **Q&A Explorer (HTML or MD)** — question-driven reference.
+
+## Step 0 — Ask which kind of explanation (when the request is open-ended)
+
+If the request is open-ended ("explain this project", "onboard me"), offer a short menu before building — one line per option, then respect the choice:
+
+| Option | What it is | Best when |
+|---|---|---|
+| **Interactive Guide** | Three-altitude HTML: overview → driveable simulation → annotated code | First contact; "make it come alive" |
+| **Project Guide (MD)** | Screenshot-anchored Markdown that lives in the repo | Team onboarding; durable documentation |
+| **Code Tour** | Real files in reading order, line-by-line commentary | "I want to read the actual source" |
+| **Q&A Explorer** | Real developer questions + short answers + code proof | Specific curiosities; troubleshooting mindset |
+| **You pick** | Skill chooses based on the project and the request, states its reason in one sentence | Undecided |
+
+Skip the menu when the request already implies a format: "write a guide into docs/" → Markdown mode; "how does X work?" → focused answer, no menu; "walk me through the code" → Code Tour. Never ask twice in one conversation — remember the first choice. If the person skips the menu or doesn't answer, default to **You pick** and say why in one sentence. Only ask a second question (whole project vs. one flow) when the scope is genuinely ambiguous; otherwise infer it.
+
+**Code Tour mode** — sequential stops through the real files in comprehension order (entry point → core flow → the subtle parts). Each stop: the actual excerpt with highlighted lines; clicking a highlighted line reveals that line's story (why it exists, what breaks without it). Same content standards as everything else: short excerpts, grep-verified, docstring rationale quoted.
+
+**Q&A Explorer mode** — 8–15 questions a developer would actually ask, grouped (entry, data flow, learning/state, failure modes, history). Each: one-line answer in bold, then the code proof and the deeper why in a collapsible block. Mine failure-mode questions from error handling paths ("what if X is down?").
 
 ## Content standards (both modes)
 
