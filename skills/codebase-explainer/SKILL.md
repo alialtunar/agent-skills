@@ -1,41 +1,53 @@
 ---
 name: codebase-explainer
-description: "Explain a codebase as a three-altitude interactive HTML guide: a concept overview, a user-driven system simulation with per-step data payloads, and annotated real code — with two-way jumps between simulation steps and their code. For onboarding, 'explain this code', 'how does X work'."
+description: "Explain a codebase as an interactive three-altitude HTML guide (overview, driveable simulation, annotated code) or a screenshot-anchored Markdown guide. For onboarding and how-does-X-work questions."
 ---
 
 # Codebase Explainer
 
-Goal: the reader ends up with a running mental model of the system — they can picture the machine working, and they can drill into the real code of any part without ever being buried in it.
+Goal: the reader ends up with a running mental model of the system — they can picture the machine working, recognize it on their own screen, and drill into the real code of any part without being buried in it.
 
-The method is a **three-altitude ladder** in a single HTML file. Each altitude answers a different question, and the altitudes are cross-linked:
+Two deliverable modes, same content standards. Pick by destination:
+- **HTML mode** — an interactive artifact for reading in chat/browser (three-altitude ladder below).
+- **Markdown mode** — a guide that lives in the repo (`docs/PROJECT_GUIDE.md`) and renders natively on GitHub. Use when the user wants documentation, not just an explanation.
 
-1. **🛰 Overview (2 min)** — *What problem does this solve, and what is the essence of the solution?* A few short paragraphs in plain language + one grounding analogy. No diagrams, no code. Ends with a button that drops the reader into the simulation.
-2. **🚁 Simulation (5 min)** — *How does the machine run?* A spatial map of the real topology (nodes = actual components, labeled with real file names). The reader drives a real scenario step by step with Next/Back — an animated packet travels the edges, active components highlight, and two small cards update per step: a **two-line narration** (bold "what happens" + one muted "why it matters" line) and a **data payload panel** (max 3 lines: what is actually transmitted on that edge). Each step card has a "🔬 see this step's code" chip.
-3. **🔬 Code (10 min)** — *What does the code actually say?* One section per simulation step: a short real excerpt (2–8 lines, gaps marked with a dim `# …`), inline comment annotations, and a paragraph on the design decision behind it. Each section ends with "↩ return to this step in the simulation", which restores the simulation at that exact step.
+## Content standards (both modes)
 
-The two-way jumps are the core of the method: curiosity in the simulation is satisfied three seconds later at ground level, and ground level never loses the thread back to the running machine.
+- **Feynman trio** per concept: plain language; one analogy that reflects the mechanism's real behavior; one named concrete scenario traced end to end and reused throughout.
+- **Real screenshots beat redrawn diagrams.** If the app has a UI, anchor the explanation to screenshots of the *running* product: capture them via browser tools if the app can be run, otherwise ask the user for them. Store under `docs/img/`, reference each from the section it explains, and point at specifics ("the 758/6000 bar is the history budget"). Map every visible element (tabs, badges, counters) to its code source.
+- **Real data samples.** Show short, real (or realistically shaped, clearly-marked) payloads: a log line, a trace record, an event list. Nothing teaches a data model faster than one honest JSON sample.
+- **Ground truth or nothing.** grep-verify every claim. Mine docstrings and comments for design rationale — bug confessions and "order matters" comments are gold; quote them.
+- **Code excerpts are short.** 2–8 lines, gaps as dim `# …`, copied not paraphrased.
+- **Self-check questions.** End with 3–5 "ask yourself" questions whose answers are derivable from the guide (e.g. "if tool X is removed, what happens to notes bound to it?"). This converts reading into retrieval practice.
+- **Honest limitations.** If the repo documents known issues/TODOs, surface them in a collapsible "known gaps" section with references. A guide that admits weaknesses is trusted on everything else.
+- **Calm visual design.** Light background, one accent (+ one secondary for async/background flows), ~760–880px width, no glow effects. Numbered step tags so the reader always knows where they are.
 
-## Writing rules (apply at every altitude)
+## HTML mode — the three-altitude ladder
 
-- **Feynman trio** per concept: plain language; one analogy that reflects the mechanism's real behavior; a named concrete scenario (a real user query traced end to end — reuse the same scenario across all three altitudes).
-- **Code excerpts are short.** 2–8 lines per block, never a full function dump; elide with a dim `# …`. Real code only — copied from the repo, not paraphrased.
-- **Ground truth or nothing.** Verify every claim with grep before writing it. Mine docstrings and code comments for design rationale — confessions of past bugs and "order matters" comments are gold; quote them.
-- **Anchor to what the user sees.** If the project has a UI, map visible elements (tab names, counters, badges) to their code sources ("the 758/6000 bar on screen is this budget").
-- **Calm visual design.** Light background, one accent color (+ one secondary for background/async flows), native fonts, ~760–880px reading width, no glow effects, no dark code panels at altitude 1. Short labels; numbered step tags ("3 · budget gate") so the reader always knows where they are.
+One file, vanilla JS, no external deps. Working reference: `references/interactive-example.html`.
+
+1. **🛰 Overview (2 min)** — what problem, what essence, one analogy. Screenshots welcome here. Ends with a button dropping into the simulation.
+2. **🚁 Simulation (5 min)** — spatial map of the real topology (nodes labeled with real file names; UI-tab names where relevant). The reader drives one real scenario with Next/Back: animated packet on the edges, active nodes highlight, and per step a **two-line narration** (bold what + muted why) plus a **data payload panel** (≤3 lines of what actually travels on that wire). Each step card carries "🔬 see this step's code".
+3. **🔬 Code (10 min)** — one section per step: short real excerpt, inline annotations, the design decision behind it, and "↩ return to this step in the simulation" (restores that exact step). Close with self-check questions.
+
+The two-way jumps are the core: curiosity in the simulation is satisfied at ground level three seconds later, and ground level never loses the thread back to the running machine.
+
+## Markdown mode — the repo guide
+
+Structure (adapt, don't pad — cut any section with nothing real to say):
+
+1. **Why this project exists** — the problem, as a small table if it has clean facets; the essence in one bolded sentence; the analogy.
+2. **UI anatomy** — one full screenshot; walk the regions; state the thesis the UI embodies if there is one.
+3. **Lifecycle of one scenario** — a mermaid `sequenceDiagram` of the chosen scenario + the one critical timing insight (what the user does/doesn't wait for). `<details>` for call-chain specifics.
+4. **Component tour** — per major component: what question it answers, its screenshot, plain explanation + analogy, then `<details>Technical details</details>` with file paths, thresholds, and rationale. A small table comparing components (type / question / lifetime) earns its place here.
+5. **Real data samples** — 2–3 short JSON/log excerpts with one-line captions.
+6. **How to run** — commands, env vars, endpoints table. Only what's verified.
+7. **Directory map** — annotated tree + the dependency direction rule in one sentence.
+8. **Ask yourself** — 3–5 questions. Optional `<details>` with known gaps.
 
 ## Workflow
 
-**Step 1 — Recon.** Directory tree + package manifests → tech stack and entry points. For multi-service projects: entry points first, then boundaries (HTTP? queue? shared DB?), then read the single most critical flow end to end. Grep-verify everything you plan to assert.
-
-**Step 2 — Pick the scenario.** One real, concrete user action that exercises the most of the system (ideally including any async/background paths, drawn in the secondary color). 7–10 simulation steps; one event per step.
-
-**Step 3 — Build.** Start from `references/interactive-example.html` — it is a complete working implementation of the three-altitude engine (zoom bar, SVG map with animated packet, step/payload cards, code sections with flash-scroll jumps, back-links). Swap in the project's topology, scenario, payloads, and code excerpts. Keep it a single file, vanilla JS, no external dependencies.
-
-**Step 4 — Self-check before delivering.**
-- Does altitude 1 alone give a correct (if shallow) mental model?
-- Can the reader who only drives the simulation explain the flow to a colleague?
-- Does every "see code" jump land on the excerpt that actually implements that step?
-- Is every quote/claim verifiable in the repo?
-- Does any part read like a report? Rewrite it.
-
-**Step 5 — Deliver.** Present the HTML in chat. If the user asks to save into the repo: `docs/` for the HTML; a Markdown fallback (same three sections, `<details>` for depth, mermaid sequence diagram replacing the simulation) if they need something GitHub renders natively.
+1. **Recon**: tree + manifests → stack, entry points; multi-service → boundaries first, then read the single most critical flow end to end. Verify everything you'll assert.
+2. **Scenario**: one concrete user action exercising the most of the system, including async paths (secondary color / noted separately).
+3. **Screenshots**: run the app if possible (docker/npm scripts) and capture; else request from the user; else proceed without and say so.
+4. **Build** in the chosen mode. 5. **Self-check** before delivering: Does the overview alone give a correct mental model? Does every code jump land on the implementing excerpt? Is every claim verifiable? Does any part read like a report? Fix, then deliver.
