@@ -1,247 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  :root {
-    --bg: #ffffff;
-    --text: #1a1a1a;
-    --muted: #5a5a5a;
-    --accent: #2d6a4f;
-    --accent-soft: #e7f2ec;
-    --active: #f0b429;
-    --active-soft: #fdf3dc;
-    --border: #e5e5e0;
-    --surface: #faf9f6;
-    --done: #b9d8c9;
-  }
-  * { box-sizing: border-box; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    line-height: 1.65; max-width: 780px; margin: 0 auto;
-    padding: 2.5rem 1.25rem 4rem;
-  }
-  h1 { font-size: 1.6rem; margin-bottom: .3rem; }
-  .subtitle { color: var(--muted); margin-bottom: 1.5rem; }
-  code { background:#f0efe9; padding:.1rem .35rem; border-radius:4px; font-size:.88em; }
-  .analogy { border-left:3px solid var(--accent); padding-left:.9rem; margin:.9rem 0; color:var(--muted); font-style:italic; }
-
-  details.section { border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; background:var(--surface); overflow:hidden; }
-  details.section > summary { padding:.85rem 1.1rem; cursor:pointer; font-weight:600; list-style:none; display:flex; align-items:center; gap:.5rem; }
-  details.section > summary::-webkit-details-marker { display:none; }
-  details.section > summary::before { content:"▸"; color:var(--accent); transition:transform .15s; font-size:.8rem; }
-  details.section[open] > summary::before { transform:rotate(90deg); }
-  .section-body { padding: 0 1.1rem 1.1rem; }
-  details.deep { margin-top:.9rem; border-top:1px dashed var(--border); padding-top:.7rem; }
-  details.deep > summary { cursor:pointer; color:var(--muted); font-size:.9rem; font-weight:500; }
-  details.deep .deep-body { margin-top:.6rem; font-size:.92rem; color:var(--muted); }
-
-  /* ---- Step-through flow player ---- */
-  .player { border:1px solid var(--border); border-radius:12px; padding:1.1rem; margin:1rem 0; background:#fff; }
-  .stage { display:flex; align-items:center; justify-content:space-between; gap:.4rem; flex-wrap:wrap; margin-bottom:1rem; }
-  .node {
-    flex:1; min-width:90px; text-align:center; padding:.7rem .4rem;
-    border:2px solid var(--border); border-radius:10px; font-size:.85rem; font-weight:600;
-    transition: all .3s; background:#fff;
-  }
-  .node .icon { font-size:1.3rem; display:block; margin-bottom:.15rem; }
-  .node.active { border-color:var(--active); background:var(--active-soft); transform:scale(1.06); }
-  .node.done { border-color:var(--done); background:var(--accent-soft); }
-  .arrow { color:#c9c9c2; font-size:1.1rem; transition:color .3s; }
-  .arrow.active { color:var(--active); }
-  .arrow.done { color:var(--accent); }
-  .narration {
-    min-height:3.6rem; background:var(--surface); border-radius:8px;
-    padding:.8rem 1rem; font-size:.95rem; margin-bottom:.8rem;
-  }
-  .narration b { color:var(--accent); }
-  .controls { display:flex; gap:.5rem; align-items:center; }
-  .btn {
-    background:var(--accent); color:#fff; border:none; border-radius:8px;
-    padding:.55rem 1.1rem; font-size:.92rem; font-weight:600; cursor:pointer;
-  }
-  .btn:disabled { background:#c9c9c2; cursor:default; }
-  .btn.ghost { background:transparent; color:var(--accent); border:1px solid var(--accent); }
-  .progress { margin-left:auto; color:var(--muted); font-size:.85rem; }
-
-  /* ---- Predict-then-reveal quiz ---- */
-  .quiz { border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; margin:1rem 0; background:#fff; }
-  .quiz .q { font-weight:600; margin-bottom:.7rem; }
-  .quiz .opts { display:flex; flex-direction:column; gap:.45rem; }
-  .opt {
-    text-align:left; padding:.6rem .9rem; border:1.5px solid var(--border);
-    border-radius:8px; background:var(--surface); cursor:pointer; font-size:.93rem;
-    transition:all .15s;
-  }
-  .opt:hover { border-color:var(--accent); }
-  .opt.correct { border-color:var(--accent); background:var(--accent-soft); }
-  .opt.wrong { border-color:#d9776b; background:#fbeae8; }
-  .explain { margin-top:.7rem; font-size:.9rem; color:var(--muted); display:none; }
-  .explain.show { display:block; }
-</style>
-</head>
+:root{--bg:#faf9f6;--card:#fff;--text:#2a2a28;--muted:#8a877f;--border:#e8e6e0;--accent:#2d6a4f;--accent-soft:#eaf3ee;--learn:#b7791f;--learn-soft:#faf3e6;--code:#f6f5f1}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;margin:0 auto;max-width:860px;padding:1.6rem 1.2rem 3.5rem;line-height:1.6}
+h1{font-size:1.35rem;margin:0 0 .2rem}.subtitle{color:var(--muted);font-size:.9rem;margin-bottom:1rem}
+.zoombar{position:sticky;top:0;background:var(--bg);padding:.6rem 0 .7rem;display:flex;gap:.5rem;z-index:10;border-bottom:1px solid var(--border);margin-bottom:1.1rem}
+.zbtn{flex:1;border:1.5px solid var(--border);background:var(--card);border-radius:10px;padding:.5rem;font-size:.87rem;cursor:pointer;color:var(--muted);font-weight:600}
+.zbtn.cur{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.zbtn small{display:block;font-weight:400;font-size:.7rem}
+.lvl{display:none}.lvl.show{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2{font-size:1.05rem;margin:1.4rem 0 .4rem}
+p{font-size:.93rem;margin:.5rem 0}
+.an{border-left:3px solid var(--accent);padding-left:.85rem;color:var(--muted);font-style:italic;font-size:.9rem;margin:.7rem 0}
+.gonext{background:var(--accent-soft);border-radius:10px;padding:.6rem .9rem;font-size:.86rem;color:var(--accent);margin-top:1.1rem;cursor:pointer;font-weight:600;text-align:center}
+.map{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:.9rem}
+svg{width:100%;height:auto;display:block}
+.node-box{fill:#fff;stroke:#ddd9d0;stroke-width:1.5;transition:all .35s}
+rect.on{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+rect.on-learn{stroke:var(--learn);stroke-width:2.5;fill:var(--learn-soft)}
+.node-label{fill:var(--text);font-size:13px;font-weight:600;text-anchor:middle}
+.node-sub{fill:var(--muted);font-size:9.5px;text-anchor:middle}
+.edge{stroke:#dcd8cf;stroke-width:1.6;fill:none}
+.edge.lit{stroke:var(--accent);stroke-width:2.4}
+.edge.lit-learn{stroke:var(--learn);stroke-width:2.4}
+.info{display:grid;grid-template-columns:1.15fr 1fr;gap:.8rem;margin-top:.8rem}
+@media(max-width:680px){.info{grid-template-columns:1fr}}
+.stepcard,.databox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:.85rem 1.05rem}
+.tag{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:.25rem}
+.tag.learn{color:var(--learn)}
+.what{font-size:.98rem;font-weight:600;margin-bottom:.3rem}
+.why{font-size:.88rem;color:var(--muted)}
+.codejump{display:inline-block;margin-top:.55rem;font-size:.8rem;color:var(--accent);font-weight:600;cursor:pointer;border:1px solid var(--accent);border-radius:999px;padding:.15rem .7rem}
+.dh{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.45rem}
+.dline{font-family:ui-monospace,monospace;font-size:.82rem;padding:.13rem 0;color:var(--muted)}
+.dline b{color:var(--text)}.dline.hot{color:var(--accent);font-weight:600}.dline.warn{color:var(--learn);font-weight:600}
+.controls{display:flex;gap:.55rem;align-items:center;margin-top:.85rem}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:.58rem 1.45rem;font-size:.95rem;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:disabled{opacity:.3;cursor:default}
+.dots{margin-left:auto;display:flex;gap:.32rem}
+.dt{width:8px;height:8px;border-radius:50%;background:#ddd9d0;transition:all .25s}
+.dt.done{background:var(--accent)}.dt.done.l{background:var(--learn)}
+.csec{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem 1.15rem;margin-bottom:.9rem;scroll-margin-top:5.5rem}
+.csec.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{background:var(--accent-soft)}100%{background:var(--card)}}
+.csec h3{font-size:.98rem;margin:0 0 .1rem}
+.csec .fp{font-family:ui-monospace,monospace;font-size:.71rem;color:var(--muted);margin-bottom:.55rem}
+pre{background:var(--code);border:1px solid var(--border);border-radius:9px;padding:.6rem .85rem;overflow-x:auto;font-size:.76rem;line-height:1.5;font-family:ui-monospace,monospace;color:#4b4a45;margin:.45rem 0}
+.cm{color:#8a877f}
+.csec p{font-size:.87rem}
+.backsim{font-size:.8rem;color:var(--accent);font-weight:600;cursor:pointer}
+</style></head>
 <body>
 
 <h1>shop-platform</h1>
-<div class="subtitle">A shopping system built from 4 small services — learn it by clicking through</div>
+<div class="subtitle">A three-altitude guide: read the concept, drive the machine, then drop into the code. Every simulation step links to its real code and back.</div>
 
-<p>This is a system that lets people shop online. Someone creates an account, logs in, buys what's in their cart — and gets a confirmation email when the order goes through. It's not one program: four small parts talk to each other. Below, you'll first <b>drive the order's journey step by step yourself</b>, then test whether you really got it with a few questions.</p>
+<div class="zoombar">
+<button class="zbtn cur" data-l="0">🛰 Overview<small>what &amp; why · 2 min</small></button>
+<button class="zbtn" data-l="1">🚁 Simulation<small>drive it · 5 min</small></button>
+<button class="zbtn" data-l="2">🔬 Code<small>line by line · 10 min</small></button>
+</div>
 
-<!-- ============ STEP-THROUGH FLOW PLAYER ============ -->
-<details class="section" open>
-  <summary>The journey of Alice's order — step through it</summary>
-  <div class="section-body">
-    <div class="player" id="player">
-      <div class="stage">
-        <div class="node" data-n="alice"><span class="icon">🧑</span>Alice</div>
-        <div class="arrow" data-a="0">→</div>
-        <div class="node" data-n="gw"><span class="icon">🚪</span>gateway</div>
-        <div class="arrow" data-a="1">→</div>
-        <div class="node" data-n="orders"><span class="icon">📦</span>orders</div>
-        <div class="arrow" data-a="2">→</div>
-        <div class="node" data-n="mq"><span class="icon">📬</span>mailbox</div>
-        <div class="arrow" data-a="3">→</div>
-        <div class="node" data-n="notif"><span class="icon">📮</span>notifications</div>
-      </div>
-      <div class="narration" id="narration">Press <b>Next</b> to start. Alice just clicked "Buy"...</div>
-      <div class="controls">
-        <button class="btn ghost" id="backBtn" disabled>← Back</button>
-        <button class="btn" id="nextBtn">Next →</button>
-        <span class="progress" id="progress">0 / 6</span>
-      </div>
-    </div>
+<div class="lvl show" id="l0">
+<h2>What does this system do?</h2>
+<p>It lets people shop online: create an account, log in, buy what's in the cart, receive a confirmation email. It is not one program — four small services talk to each other, and the most interesting conversations happen <b>after</b> the customer has already left.</p>
+<h2>The essence in one sentence</h2>
+<p><b>The synchronous path (gateway → auth → orders) answers the customer fast; everything slow or optional (email) is handed to a queue and happens in the background.</b></p>
+<div class="an">Think of the queue as the ticket rail in a restaurant kitchen: the waiter pins the order and walks back to the table — never waiting to see when the kitchen picks it up.</div>
+<p>On stage: a <b>gateway</b> (front door, no logic of its own), an <b>auth</b> service (issues signed JWT "wristbands"), an <b>orders</b> service (writes the order, publishes an event), and a <b>notifications</b> worker that is not a web server at all — it just listens to the queue and sends mail.</p>
+<div class="gonext" onclick="go(1)">Now watch the machine run → Simulation</div>
+</div>
 
-    <div class="analogy">Think of the mailbox like the order ticket a waiter clips up for the kitchen — the waiter pins the ticket and walks away, not even knowing when the kitchen will look at it.</div>
-
-    <details class="deep">
-      <summary>Technical details</summary>
-      <div class="deep-body">
-        <p><b>A real bug:</b> the note dropped in the mailbox contains Alice's user ID but no email address. The line <code>to: order.userId</code> in <code>notifications/src/templates/orderConfirmation.js</code> treats that ID as an email — verified with grep against the code; the mail most likely never sends.</p>
-        <p><b>Fragile spot:</b> if the order is written to the DB but dropping the note into the mailbox fails, there is no rollback — you can end up with an order in the DB and no event ever published. Relevant code: <code>orders/src/services/orderService.js</code></p>
-      </div>
-    </details>
+<div class="lvl" id="l1">
+<div class="map">
+<svg viewBox="0 0 840 380" xmlns="http://www.w3.org/2000/svg">
+  <path id="e1" class="edge" d="M140 190 L225 190"/>
+  <path id="e2" class="edge" d="M400 165 C460 130 500 110 545 98"/>
+  <path id="e3" class="edge" d="M545 118 C500 140 460 155 400 180"/>
+  <path id="e4" class="edge" d="M400 205 L545 205"/>
+  <path id="e5" class="edge" d="M225 205 L140 205"/>
+  <path id="e6" class="edge" d="M630 235 L630 285"/>
+  <path id="e7" class="edge" d="M620 315 C500 330 380 330 330 300"/>
+  <g id="n-user"><rect class="node-box" x="30" y="162" width="110" height="56" rx="12"/>
+    <text class="node-label" x="85" y="186">🧑 Alice</text><text class="node-sub" x="85" y="202">browser</text></g>
+  <g id="n-gw"><rect class="node-box" x="225" y="150" width="175" height="80" rx="12"/>
+    <text class="node-label" x="312" y="184">🚪 gateway</text><text class="node-sub" x="312" y="202">routes, no logic</text></g>
+  <g id="n-auth"><rect class="node-box" x="545" y="70" width="170" height="56" rx="12"/>
+    <text class="node-label" x="630" y="94">🎫 auth</text><text class="node-sub" x="630" y="110">issues JWT wristbands</text></g>
+  <g id="n-orders"><rect class="node-box" x="545" y="178" width="170" height="56" rx="12"/>
+    <text class="node-label" x="630" y="202">📦 orders</text><text class="node-sub" x="630" y="218">verify · write · publish</text></g>
+  <g id="n-mq"><rect class="node-box" x="560" y="285" width="140" height="50" rx="12"/>
+    <text class="node-label" x="630" y="307">📬 queue</text><text class="node-sub" x="630" y="322">RabbitMQ fanout</text></g>
+  <g id="n-notif"><rect class="node-box" x="230" y="270" width="165" height="56" rx="12"/>
+    <text class="node-label" x="312" y="294">📮 notifications</text><text class="node-sub" x="312" y="310">worker, not a server</text></g>
+  <circle id="packet" r="6" cx="-20" cy="-20" fill="#2d6a4f" visibility="hidden"/>
+</svg>
+</div>
+<div class="info">
+  <div class="stepcard">
+    <div class="tag" id="tag">start</div>
+    <div class="what" id="what">Alice clicks "Buy" on the 2 items in her cart.</div>
+    <div class="why" id="why">Press Next — you'll carry the request through the system yourself.</div>
+    <span class="codejump" id="cj" style="display:none" onclick="jump()">🔬 see this step's code</span>
   </div>
-</details>
-
-<!-- ============ PREDICT-THEN-REVEAL QUESTIONS ============ -->
-<details class="section">
-  <summary>Test yourself — 3 questions</summary>
-  <div class="section-body">
-
-    <div class="quiz">
-      <div class="q">1. Suppose the notifications service is completely down. Alice clicks "Buy". What happens?</div>
-      <div class="opts">
-        <button class="opt" data-ok="0">The order fails and Alice sees an error</button>
-        <button class="opt" data-ok="1">The order succeeds normally, only the email never sends</button>
-        <button class="opt" data-ok="0">The order is created but Alice waits until the email is sent</button>
-      </div>
-      <div class="explain">Correct: the order succeeds. <code>orders</code> just drops a note in the mailbox and immediately says "received" — it never knows whether <code>notifications</code> is alive. The two are fully independent.</div>
-    </div>
-
-    <div class="quiz">
-      <div class="q">2. auth rotates its JWT_SECRET, but orders keeps the old value. What happens?</div>
-      <div class="opts">
-        <button class="opt" data-ok="0">Nothing — each service uses its own secret</button>
-        <button class="opt" data-ok="0">Only newly registered users are affected</button>
-        <button class="opt" data-ok="1">Every newly logged-in user gets their orders rejected with 401</button>
-      </div>
-      <div class="explain">Correct: auth signs wristbands with the new secret, orders checks them with the old one — signatures don't match, so all new tokens are rejected. This is the one secret the two services share; it must be rotated together.</div>
-    </div>
-
-    <div class="quiz">
-      <div class="q">3. A "my email never arrived" complaint comes in. Which service do you look at first?</div>
-      <div class="opts">
-        <button class="opt" data-ok="0">gateway — all requests pass through it</button>
-        <button class="opt" data-ok="1">notifications — email is entirely its job</button>
-        <button class="opt" data-ok="0">auth — maybe it's a token problem</button>
-      </div>
-      <div class="explain">Correct: email is entirely <code>notifications</code>' job; gateway and auth have nothing to do with mail. (Bonus: this project genuinely has an email bug — see "Technical details" above.)</div>
-    </div>
-
+  <div class="databox">
+    <div class="dh">Data on this wire</div>
+    <div id="pl"><div class="dline">—</div></div>
   </div>
-</details>
+</div>
+<div class="controls">
+  <button class="btn ghost" id="backBtn" disabled>← Back</button>
+  <button class="btn" id="nextBtn">Next →</button>
+  <span class="dots" id="dots"></span>
+</div>
+</div>
 
-<!-- ============ OTHER SECTIONS ============ -->
-<details class="section">
-  <summary>How login / registration works</summary>
-  <div class="section-body">
-    <p>The <code>auth</code> service is the ID-card office: on registration it hashes and stores the password, on login it checks the password and hands out a JWT.</p>
-    <div class="analogy">Think of the JWT as an event wristband — once you're checked and banded, no one asks for your ID at every door, but the band expires (here: 2 hours) and you need a new one.</div>
-    <details class="deep">
-      <summary>Technical details</summary>
-      <div class="deep-body">
-        <p>The token is signed in <code>auth/src/services/authService.js</code> with <code>expiresIn: '2h'</code>; verification lives in <code>orders/src/services/authMiddleware.js</code>. Passwords are hashed with bcrypt (10 rounds); plaintext is never stored.</p>
-      </div>
-    </details>
-  </div>
-</details>
+<div class="lvl" id="l2">
+<p style="color:var(--muted);font-size:.87rem">The real code behind each simulation step. Every section links back to the simulation at that exact step.</p>
 
-<details class="section">
-  <summary>How to run it</summary>
-  <div class="section-body">
-    <p>Each service installs with <code>npm install</code> in its own folder; a running PostgreSQL and RabbitMQ are required for all of them.</p>
-  </div>
-</details>
+<div class="csec" id="c-gw"><h3>The gateway — a front door with no opinions</h3><div class="fp">services/gateway/src/index.js</div>
+<pre>app.use("/auth",   createProxyMiddleware({ target: AUTH_URL }));
+app.use("/orders", createProxyMiddleware({ target: ORDERS_URL }));</pre>
+<p>That is the entire service: match the path, forward untouched. Keeping the door dumb means auth and orders can change freely behind it.</p>
+<span class="backsim" onclick="back(1)">↩ return to this step in the simulation (2)</span></div>
+
+<div class="csec" id="c-auth"><h3>The wristband check — stateless auth</h3><div class="fp">services/orders/src/services/authMiddleware.js</div>
+<pre>const token = (req.headers.authorization || "").split(" ")[1];
+req.user = jwt.verify(token, process.env.JWT_SECRET);
+next();  <span class="cm">// invalid/expired → catch → 401, handler never runs</span></pre>
+<p>orders never calls the auth service — it only checks the signature. The catch: auth (signer) and orders (verifier) must share the same <b>JWT_SECRET</b>; rotate one without the other and every token dies.</p>
+<span class="backsim" onclick="back(2)">↩ return to this step in the simulation (3)</span></div>
+
+<div class="csec" id="c-order"><h3>Write, then publish — and why that order matters</h3><div class="fp">services/orders/src/services/orderService.js</div>
+<pre>const order = await repo.insert(userId, items);   <span class="cm">// DB first: we need the real id</span>
+await publishOrderCreated(order);                 <span class="cm">// then the event carries it</span>
+return order;</pre>
+<p>DB-first so the event carries the real <code>order.id</code>. Fragile spot: if the publish throws after the insert, there is no rollback — order exists, event never sent. A worthwhile fix would be an outbox pattern.</p>
+<span class="backsim" onclick="back(3)">↩ return to this step in the simulation (4)</span></div>
+
+<div class="csec" id="c-pub"><h3>Fire and forget — the customer never waits for mail</h3><div class="fp">services/orders/src/events/publisher.js</div>
+<pre>ch.publish("orders", "", Buffer.from(JSON.stringify({
+  type: "order.created", order   <span class="cm">// note: carries userId, no email…</span>
+})));</pre>
+<p>orders drops the note and replies 201 immediately. It doesn't know notifications exists — and can't know if nobody is listening. Look closely at the payload: it carries a <b>userId</b>, and nothing else about Alice. Remember that.</p>
+<span class="backsim" onclick="back(4)">↩ return to this step in the simulation (5)</span></div>
+
+<div class="csec" id="c-worker"><h3>The listener — a worker, not a server</h3><div class="fp">services/notifications/src/workers/orderCreatedWorker.js</div>
+<pre>const q = await ch.assertQueue("", { exclusive: true }); <span class="cm">// unnamed → not durable!</span>
+ch.consume(q.queue, async (msg) => {
+  const event = JSON.parse(msg.content.toString());
+  if (event.type === "order.created") await sendOrderConfirmation(event.order);
+  ch.ack(msg);  <span class="cm">// acked even on unknown types — no retry path</span>
+});</pre>
+<p>Two quiet risks: the queue is exclusive and unnamed, so messages arriving while the worker is down are lost forever; and everything is acked, so a failed send is never retried.</p>
+<span class="backsim" onclick="back(5)">↩ return to this step in the simulation (6)</span></div>
+
+<div class="csec" id="c-bug"><h3>The payoff — a real bug you can only see end to end</h3><div class="fp">services/notifications/src/templates/orderConfirmation.js</div>
+<pre>await transporter.sendMail({
+  to: order.userId,   <span class="cm">// ← this is a user id, not an email address!</span>
+  subject: "Your order is confirmed"
+});</pre>
+<p>Step 5's payload carried only <code>userId</code>. Read alone, each service looks fine; traced end to end, the mail goes "to 42" and silently fails. This is why the simulation follows the <b>data</b>, not just the arrows.</p>
+<span class="backsim" onclick="back(6)">↩ return to this step in the simulation (7)</span></div>
+</div>
 
 <script>
-// ---- Flow player ----
-const steps = [
-  { node:'alice',  arrow:null, text:'<b>Alice</b> clicked "Buy" for the 2 items in her cart. Her browser sends a request along with the ID card (JWT) in her pocket.' },
-  { node:'gw',     arrow:0,    text:'The request first hits the <b>gateway</b> (the front door). The gateway does no work of its own — it looks at the address, says "this is an order request", and forwards it to orders.' },
-  { node:'orders', arrow:1,    text:'<b>orders</b> first checks the ID card: is the signature real, has it expired? If valid, it reads Alice\'s user number off the card.' },
-  { node:'orders', arrow:null, text:'<b>orders</b> writes the order to the database and gets back an order number. Alice\'s order is now permanently recorded.' },
-  { node:'mq',     arrow:2,    text:'<b>orders</b> drops an "order created" note into the mailbox and immediately tells Alice "Order received!". Note: no email has been sent yet — and Alice isn\'t waiting for one.' },
-  { node:'notif',  arrow:3,    text:'<b>notifications</b> checks the mailbox, sees the note, and sends the confirmation email. This all happens in the background; Alice already saw the "received" screen.' },
+const $=id=>document.getElementById(id);
+function go(l){document.querySelectorAll('.zbtn').forEach((b,i)=>b.classList.toggle('cur',i===l));
+ document.querySelectorAll('.lvl').forEach((d,i)=>d.classList.toggle('show',i===l));
+ window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('.zbtn').forEach((b,i)=>b.onclick=()=>go(i));
+const steps=[
+ {edge:'e1',nodes:['n-user','n-gw'],learn:false,tag:'1 · request in',what:'The request hits the gateway.',
+  why:'The gateway does zero business logic — it matches the path and forwards.',
+  pl:[['POST','/orders','hot'],['Authorization','Bearer <jwt>'],['body','2 items']],code:'c-gw'},
+ {edge:'e3',nodes:['n-orders'],learn:false,tag:'2 · wristband check',what:'orders verifies the JWT locally.',
+  why:'No call to the auth service — just a signature check with the shared secret.',
+  pl:[['jwt.verify','signature ok, not expired','hot'],['req.user','{ sub: 42 }','hot']],code:'c-auth'},
+ {edge:'e4',nodes:['n-orders'],learn:false,tag:'3 · write first',what:'The order is written to the database.',
+  why:'DB first, event second — the event needs the real order id.',
+  pl:[['INSERT','orders(user_id, items)'],['returns','order.id = 917','hot']],code:'c-order'},
+ {edge:'e6',nodes:['n-orders','n-mq'],learn:true,tag:'4 · note dropped',what:'orders publishes "order.created" and replies 201 to Alice.',
+  why:'Alice sees "Order received!" before any email exists. Watch the payload.',
+  pl:[['event.type','"order.created"'],['event.order','{ id:917, userId:42, items }','hot'],['notice','no email field','warn']],code:'c-pub'},
+ {edge:'e7',nodes:['n-mq','n-notif'],learn:true,tag:'5 · worker wakes',what:'notifications picks the note off the queue.',
+  why:'A background worker, not a web server. Alice left long ago.',
+  pl:[['consumed','order.created #917'],['queue','exclusive, unnamed','warn']],code:'c-worker'},
+ {edge:null,nodes:['n-notif'],learn:true,tag:'6 · the payoff',what:'It sends mail "to: 42" — a user id, not an email.',
+  why:'Each service looks fine alone; only the end-to-end data trace reveals the bug.',
+  pl:[['to','42 ← not an email!','warn'],['result','silent failure','warn']],code:'c-bug'},
+ {edge:'e5',nodes:['n-user'],learn:false,tag:'7 · already done',what:'Meanwhile Alice has long seen "Order received!".',
+  why:'The sync path and the async path never waited for each other — that is the architecture.',
+  pl:[['status','201 Created','hot']],code:'c-pub'},
 ];
-let cur = -1;
-const nodes = document.querySelectorAll('.node');
-const arrows = document.querySelectorAll('.arrow');
-const narration = document.getElementById('narration');
-const nextBtn = document.getElementById('nextBtn');
-const backBtn = document.getElementById('backBtn');
-const progress = document.getElementById('progress');
-
-function render() {
-  nodes.forEach(n => n.classList.remove('active','done'));
-  arrows.forEach(a => a.classList.remove('active','done'));
-  for (let i = 0; i <= cur; i++) {
-    const s = steps[i];
-    const el = document.querySelector(`.node[data-n="${s.node}"]`);
-    if (i === cur) el.classList.add('active'); else el.classList.add('done');
-    if (s.arrow !== null) {
-      const ar = document.querySelector(`.arrow[data-a="${s.arrow}"]`);
-      ar.classList.add(i === cur ? 'active' : 'done');
-    }
-  }
-  narration.innerHTML = cur === -1
-    ? 'Press <b>Next</b> to start. Alice just clicked "Buy"...'
-    : steps[cur].text;
-  progress.textContent = `${cur+1 < 0 ? 0 : cur+1} / ${steps.length}`;
-  nextBtn.disabled = cur === steps.length - 1;
-  backBtn.disabled = cur === -1;
-  nextBtn.textContent = cur === steps.length - 1 ? 'Done ✓' : 'Next →';
-}
-nextBtn.onclick = () => { if (cur < steps.length - 1) { cur++; render(); } };
-backBtn.onclick = () => { if (cur > -1) { cur--; render(); } };
-render();
-
-// ---- Quiz ----
-document.querySelectorAll('.quiz').forEach(quiz => {
-  const opts = quiz.querySelectorAll('.opt');
-  const explain = quiz.querySelector('.explain');
-  opts.forEach(opt => {
-    opt.onclick = () => {
-      opts.forEach(o => {
-        o.disabled = true;
-        if (o.dataset.ok === '1') o.classList.add('correct');
-      });
-      if (opt.dataset.ok !== '1') opt.classList.add('wrong');
-      explain.classList.add('show');
-    };
-  });
-});
+const dots=$('dots');steps.forEach(()=>{const d=document.createElement('span');d.className='dt';dots.appendChild(d)});
+let cur=-1,animId=null;
+function paint(){
+ document.querySelectorAll('.edge').forEach(e=>e.classList.remove('lit','lit-learn'));
+ document.querySelectorAll('g[id^="n-"] rect').forEach(r=>r.classList.remove('on','on-learn'));
+ for(let i=0;i<=cur;i++){if(steps[i].edge)$(steps[i].edge).classList.add(steps[i].learn?'lit-learn':'lit');}
+ if(cur>-1)steps[cur].nodes.forEach(n=>$(n).querySelector('rect').classList.add(steps[cur].learn?'on-learn':'on'));
+ [...dots.children].forEach((d,i)=>d.className='dt'+(i<=cur?(steps[i].learn?' done l':' done'):''));
+ $('backBtn').disabled=cur===-1;$('nextBtn').disabled=cur===steps.length-1;
+ $('nextBtn').textContent=cur===steps.length-1?'Done ✓':'Next →';}
+function fill(){
+ if(cur===-1){$('tag').textContent='start';$('tag').className='tag';
+  $('what').textContent='Alice clicks "Buy" on the 2 items in her cart.';
+  $('why').textContent='Press Next — you\'ll carry the request through the system yourself.';
+  $('pl').innerHTML='<div class="dline">—</div>';$('cj').style.display='none';return;}
+ const s=steps[cur];
+ $('tag').textContent=s.tag;$('tag').className='tag'+(s.learn?' learn':'');
+ $('what').textContent=s.what;$('why').textContent=s.why;
+ $('pl').innerHTML=s.pl.map(p=>`<div class="dline${p[2]?' '+p[2]:''}"><b>${p[0]}</b> — ${p[1]}</div>`).join('');
+ $('cj').style.display='inline-block';}
+function move(done){
+ const s=steps[cur];if(!s.edge){done();return;}
+ const path=$(s.edge),len=path.getTotalLength(),pk=$('packet');
+ pk.setAttribute('fill',s.learn?'#b7791f':'#2d6a4f');pk.setAttribute('visibility','visible');
+ const t0=performance.now(),dur=650;
+ (function fr(t){const p=Math.min((t-t0)/dur,1),pt=path.getPointAtLength(p*len);
+  pk.setAttribute('cx',pt.x);pk.setAttribute('cy',pt.y);
+  if(p<1)animId=requestAnimationFrame(fr);else{pk.setAttribute('visibility','hidden');done();}})(performance.now());}
+$('nextBtn').onclick=()=>{if(cur<steps.length-1){cur++;paint();move(fill);}};
+$('backBtn').onclick=()=>{if(animId)cancelAnimationFrame(animId);$('packet').setAttribute('visibility','hidden');cur--;paint();fill();};
+function jump(){if(cur<0)return;const a=steps[cur].code;go(2);
+ setTimeout(()=>{const el=$(a);el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');},250);}
+function back(step){go(1);if(step!==undefined){cur=step;paint();fill();}}
+paint();fill();
 </script>
-</body>
-</html>
+</body></html>

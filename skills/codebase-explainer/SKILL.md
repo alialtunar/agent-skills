@@ -1,78 +1,41 @@
 ---
 name: codebase-explainer
-description: "Explain a codebase or flow as an interactive active-learning HTML page: step-through flows, predict-then-reveal quizzes, collapsible depth. For onboarding, 'explain this code', 'how does X work'."
+description: "Explain a codebase as a three-altitude interactive HTML guide: a concept overview, a user-driven system simulation with per-step data payloads, and annotated real code — with two-way jumps between simulation steps and their code. For onboarding, 'explain this code', 'how does X work'."
 ---
 
 # Codebase Explainer
 
-Goal: the reader ends up with **no gaps in their mental model** — they can picture the system running. That never happens through passive reading; the reader must walk the flow themselves, make predictions, get them wrong, and correct them. Three problems, three fixes:
+Goal: the reader ends up with a running mental model of the system — they can picture the machine working, and they can drill into the real code of any part without ever being buried in it.
 
-1. **Content overload** → Feynman technique (plain language + one analogy + one traced real example)
-2. **Presentation overload** → layered disclosure (overview always visible, detail on click)
-3. **Passive reading** → active-learning mechanics (step-through player + predict-then-reveal questions)
+The method is a **three-altitude ladder** in a single HTML file. Each altitude answers a different question, and the altitudes are cross-linked:
 
-## Core: Three Active-Learning Mechanics
+1. **🛰 Overview (2 min)** — *What problem does this solve, and what is the essence of the solution?* A few short paragraphs in plain language + one grounding analogy. No diagrams, no code. Ends with a button that drops the reader into the simulation.
+2. **🚁 Simulation (5 min)** — *How does the machine run?* A spatial map of the real topology (nodes = actual components, labeled with real file names). The reader drives a real scenario step by step with Next/Back — an animated packet travels the edges, active components highlight, and two small cards update per step: a **two-line narration** (bold "what happens" + one muted "why it matters" line) and a **data payload panel** (max 3 lines: what is actually transmitted on that edge). Each step card has a "🔬 see this step's code" chip.
+3. **🔬 Code (10 min)** — *What does the code actually say?* One section per simulation step: a short real excerpt (2–8 lines, gaps marked with a dim `# …`), inline comment annotations, and a paragraph on the design decision behind it. Each section ends with "↩ return to this step in the simulation", which restores the simulation at that exact step.
 
-Default output is a single-file interactive HTML page containing:
+The two-way jumps are the core of the method: curiosity in the simulation is satisfied three seconds later at ground level, and ground level never loses the thread back to the running machine.
 
-**1. Step-through flow player** — the most important flow (e.g. "what happens when the user clicks Buy") is NOT a static diagram. It's an animation the reader drives with Next/Back buttons. On each step: the active component is highlighted, completed components stay marked, and 1–2 sentences narrate exactly what happens at that step. The reader watches the request travel through the system with their own eyes — that's how the app comes alive in their head.
+## Writing rules (apply at every altitude)
 
-**2. Predict-then-reveal questions** — 2–4 questions, each posing a scenario about system behavior ("what happens if service X is down?"). The reader predicts first (clicks an option), then sees the correct answer plus the why. Questions must probe **behavior**, not trivia: not "which file?", but "what does the system do in this case?". Wrong options must be plausible — an obviously-wrong option teaches nothing.
+- **Feynman trio** per concept: plain language; one analogy that reflects the mechanism's real behavior; a named concrete scenario (a real user query traced end to end — reuse the same scenario across all three altitudes).
+- **Code excerpts are short.** 2–8 lines per block, never a full function dump; elide with a dim `# …`. Real code only — copied from the repo, not paraphrased.
+- **Ground truth or nothing.** Verify every claim with grep before writing it. Mine docstrings and code comments for design rationale — confessions of past bugs and "order matters" comments are gold; quote them.
+- **Anchor to what the user sees.** If the project has a UI, map visible elements (tab names, counters, badges) to their code sources ("the 758/6000 bar on screen is this budget").
+- **Calm visual design.** Light background, one accent color (+ one secondary for background/async flows), native fonts, ~760–880px reading width, no glow effects, no dark code panels at altitude 1. Short labels; numbered step tags ("3 · budget gate") so the reader always knows where they are.
 
-**3. Layered depth** — no detail is deleted; it's folded:
-- Layer 1 (always open): what this does + the big picture
-- Layer 2 (opens on click): each flow/service/topic in its own section
-- Layer 3 (folded inside Layer 2, "Technical details"): file names, edge cases, fragile spots, bugs found during analysis — as deep as needed
+## Workflow
 
-## Writing Rule: The Feynman Trio
+**Step 1 — Recon.** Directory tree + package manifests → tech stack and entry points. For multi-service projects: entry points first, then boundaries (HTTP? queue? shared DB?), then read the single most critical flow end to end. Grep-verify everything you plan to assert.
 
-For every explanation block:
-1. **Plain language** — avoid jargon; if unavoidable, define it inline immediately
-2. **One analogy** — from everyday life, and it must reflect how the mechanism actually behaves (message queue → a restaurant's order ticket rail; JWT → an event wristband; gateway → a building's front door)
-3. **A named, concrete example** — not "the user" but "Alice"; not "a request" but "the 2 items in her cart". Abstract sentences like "this module manages X" are banned.
+**Step 2 — Pick the scenario.** One real, concrete user action that exercises the most of the system (ideally including any async/background paths, drawn in the secondary color). 7–10 simulation steps; one event per step.
 
-## Step 0: Mode and Format
+**Step 3 — Build.** Start from `references/interactive-example.html` — it is a complete working implementation of the three-altitude engine (zoom bar, SVG map with animated packet, step/payload cards, code sections with flash-scroll jumps, back-links). Swap in the project's topology, scenario, payloads, and code excerpts. Keep it a single file, vanilla JS, no external dependencies.
 
-- General request ("explain this project") → **Full Walkthrough**: player covers the most critical flow, quiz covers the whole system, each service gets a Layer 2 section
-- Specific question ("how does X work") → **Focused Answer**: player for that flow only, 1–2 questions, single topic — do not expand scope
-- Format: in chat contexts, **interactive HTML** (default). If the user wants a file saved into the repo, use **Markdown + `<details>` layers + mermaid** (GitHub/GitLab render these natively; the player and quiz don't exist in markdown — replace them with a sequence diagram plus "ask yourself" questions in plain text).
+**Step 4 — Self-check before delivering.**
+- Does altitude 1 alone give a correct (if shallow) mental model?
+- Can the reader who only drives the simulation explain the flow to a colleague?
+- Does every "see code" jump land on the excerpt that actually implements that step?
+- Is every quote/claim verifiable in the repo?
+- Does any part read like a report? Rewrite it.
 
-## Step 1: Recon — Read Only What You Need
-
-- Directory structure + package manifest for the tech stack
-- Find entry points (routes, main/index)
-- Large/multi-service projects: first read only each service's entry point, then map the boundaries between services (HTTP? queue? shared DB?), then pick the 1–2 most critical flows and actually read them end to end
-- **Verify every technical claim in the code with grep.** Every player step and every quiz answer must be grounded in real code. If you can't verify it, don't write it.
-- In Focused Answer mode, scan only what the question touches
-
-## Step 2: Build the HTML
-
-Full working example: `references/interactive-example.html` — the skill applied to a sample 4-service project; contains the working code for the player, the quiz, and the layers. Use it as the template and swap in the project's content. Technical notes:
-
-- Single file, vanilla JS — no frameworks, no CDN dependencies (player and quiz are pure JS/CSS; mermaid can be loaded from cdnjs if needed, but the player usually explains the main flow better than a diagram would)
-- Layers use native `<details>/<summary>` (accessible, no JS)
-- Player: components as a horizontal row of boxes; a `steps` array maps each step to the component it highlights + its narration text; Next/Back buttons + progress counter
-- Quiz: one card per question; clicking an option marks the correct one green, the chosen wrong one red, and reveals the explanation
-- Clean look: ~760px reading width, one accent color, no decoration
-
-When writing player steps: one event per step; 4–8 steps is the sweet spot; narration must say **what happens and why**, not just "A calls B".
-
-## Step 3: Diagrams (if needed)
-
-The player already covers the main flow, so diagram needs drop. For an overall architecture picture or secondary flows, follow the type-selection guide in `references/diagram-guide.md`. Split any diagram exceeding 6–8 nodes.
-
-## Step 4: Save / Present
-
-- HTML → show via the chat's file-presentation mechanism; also save to disk if the user asks
-- Markdown (into a repo) → small project: `docs/PROJECT_GUIDE.md`; large project: `docs/PROJECT_GUIDE.md` + `docs/services/<name>.md`; focused answer: `docs/qna/<topic>.md`
-- Ask before overwriting an existing file
-
-## Final Check
-
-- Could someone who walked the player start-to-finish explain the flow to a colleague without help?
-- Do quiz questions probe behavior rather than trivia? Are wrong options plausible?
-- Does a reader who never clicks anything (Layer 1 only) still get the core idea? Does a reader who digs to Layer 3 find every detail?
-- Is every claim verified in the code?
-- Does any part read like a report? If so, rewrite it.
-
-If any answer is "no", fix it before delivering.
+**Step 5 — Deliver.** Present the HTML in chat. If the user asks to save into the repo: `docs/` for the HTML; a Markdown fallback (same three sections, `<details>` for depth, mermaid sequence diagram replacing the simulation) if they need something GitHub renders natively.
